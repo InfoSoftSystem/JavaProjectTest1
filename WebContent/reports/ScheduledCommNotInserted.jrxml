@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ScheduledCommNotInserted" language="groovy" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="21" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.3660269107301413"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ctrId" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ctrDesc" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select ctr_desc,
+	b.year_sk,
+	c.prod_desc product
+from public.year_dim b,
+	public.product_dim c,
+	(select distinct prod_sk, bb.ctr_sk
+	from public.commerce_fact aa,
+		public.country_dim bb
+	where current_date between bb.effective_date and bb.expiry_date
+	  and aa.ctr_Sk = bb.ctr_sk
+	  and bb.ctr_id in($P!{ctrId})
+	) d,
+	public.country_dim e
+where c.prod_sk = d.prod_sk
+and e.ctr_sk = d.ctr_sk
+and (b.year_sk, c.prod_sk, e.ctr_sk) not in (
+	select year_sk, prod_sk, bb.ctr_sk
+	from commerce_fact aa, country_dim bb
+	where aa.ctr_Sk = bb.ctr_sk
+	  and current_date between bb.effective_date and bb.expiry_date
+	  and bb.ctr_id in($P!{ctrId})
+	)
+ and b.year_sk between 2007 and to_char(current_date,'YYYY')::int -1
+ and current_date between c.effective_date and c.expiry_date
+ and current_date between e.effective_date and e.expiry_date
+order by ctr_desc,c.prod_desc, year_sk]]>
+	</queryString>
+	<field name="ctr_desc" class="java.lang.String"/>
+	<field name="year_sk" class="java.math.BigDecimal"/>
+	<field name="product" class="java.lang.String"/>
+	<variable name="product_1" class="java.lang.Integer" resetType="Group" resetGroup="product" calculation="Count">
+		<variableExpression><![CDATA[$F{product}]]></variableExpression>
+	</variable>
+	<group name="product" keepTogether="true">
+		<groupExpression><![CDATA[$F{product}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="177" height="15" isPrintWhenDetailOverflows="true" printWhenGroupChanges="product"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{product}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="product">
+					<reportElement stretchType="RelativeToBandHeight" x="177" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" printWhenGroupChanges="product"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[": "+$V{product_1} + " año(s)"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="52" width="554" height="27"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Adjunto se detallan los años en los cuales no se ha ingresado datos de comercio correspondiente al país: " + $P{ctrDesc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy hh:mm a">
+				<reportElement x="0" y="0" width="177" height="20"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="27" width="554" height="25"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Datos de Comercio Faltantes]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="177" y="0" width="100" height="15" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Año]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="177" y="0" width="100" height="15" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{year_sk}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN" "http://jakarta.apache.org/struts/dtds/tiles-config.dtd">
+  
+<tiles-definitions>  
+  <!-- Plantilla básica para los formularios -->
+    <definition name="plantillaBase"  path= "/plantillas/paginaBase.jsp">
+      <put name="base" value="" type="string" />
+      <put name="title" value="" />
+      <put name="css" value="" type="string"/>
+      <put name="scripts" value="" type="string"/>
+      <put name="encabezado" value="" type="string" />
+      <put name="contenido" value="" type="string" />
+      <put name="help" value="" type="string" />
+    </definition>
+    
+    
+    <definition name="plantillaSinMenu" path="/plantillas/plantillaSinMenu.jsp">
+		<put name="base" value="" />
+		<put name="title" value="" />
+		<put name="css" value=""/>
+		<put name="scripts" value=""/>
+		<put name="imagen" value=""/>
+		<put name="formTitle" value=""/>
+		<put name="contenido" value="" />
+    </definition>
+    
+  	<definition name="listaDeValores" path="/plantillas/listaDeValores.jsp"> 
+		<put name="base" value="[base de la pagina]" />
+		<put name="title" value="" />
+		<put name="css" value=""/>
+		<put name="scripts" value=""/>
+		<put name="banner" value=""/>
+		<put name="contenido" value="fff" />
+	</definition>
+	
+	<!--
+	<definition name="clienteDef" path="/layout/clienteLayout.jsp" extends="commonDef">
+	</definition>
+  
+	<definition name="administradorDef" path="/layout/administradorLayout.jsp" extends="commonDef">
+		<put name="contenido" type="string" value="[Contenido]" />
+	</definition>-->
+  
+</tiles-definitions>

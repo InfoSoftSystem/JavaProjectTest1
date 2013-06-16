@@ -1,0 +1,1184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Semana" language="groovy" pageWidth="1192" pageHeight="712" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1152" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="821"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#E6F3FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#BBA8A8">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFE6E6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#BBA8A8">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFE6E6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="newQuery">
+		<parameter name="productFilters" class="java.lang.String">
+			<defaultValueExpression><![CDATA["select 1,1,1,1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="countries" class="java.lang.String">
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="initialWeek" class="java.lang.String">
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="finalWeek" class="java.lang.String">
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select
+promedio, promediokilo,"numObs", q1.RangoSemana,
+  q1.week_id,
+  q1.ctr_desc,
+  q1.ctr_id,
+  q1.prod_id,
+  q1.ptype_id,
+  q1.prod_desc,
+  q1.var_id,
+  q1.var_desc,
+  q1.qua_id,
+  q1.qua_desc,
+  q1.size_id,
+  q1.size_desc,
+  q1.week_code,
+  ori_country,
+  tunit_desc
+from
+(select country.ctr_sk, country.ctr_id, country.ctr_desc,
+	product.prdvar_sk, product.prod_id, product.prod_desc||coalesce(' '||ptype.ptype_desc,'') prod_desc, product.var_id, product.var_desc,
+	quality.qua_sk, quality.qua_id, quality.qua_desc,
+	size.size_sk, size.size_id, size.size_desc,
+	ptype.ptype_sk, ptype.ptype_id, ptype.ptype_desc,
+	rangosemana(min(date_field)) RangoSemana, fecha.week_id,
+	substr(fecha.week_id::varchar,5,2) ||'-'|| substr(fecha.week_id::varchar,1,4) week_code
+	from
+		public.country_dim country,
+		public.date_dim fecha,
+		PRODUCt_variety_dim product,
+		public.product_type_dim ptype,
+		public.size_dim size,
+		public.quality_dim quality
+	where 1=1
+	  and ptype.prod_id = product.prod_id
+	  and current_date between country.effective_date and country.expiry_date
+	  and current_date between product.effective_date and product.expiry_date
+	  and current_date between ptype.effective_date and ptype.expiry_date
+	  and current_date between size.effective_date and size.expiry_date
+	  and current_date between quality.effective_date and quality.expiry_date
+	  and country.ctr_id IN ($P!{countries})
+	  and date_field BETWEEN to_date($P{initialWeek},'dd/mm/yyyy') and to_date($P{finalWeek},'dd/mm/yyyy')
+	  and (product.prdvar_sk, ptype.ptype_sk, quality.qua_Id, size.size_Id) IN ($P!{productFilters})
+	GROUP BY
+		country.ctr_sk,
+		country.ctr_desc,
+		country.ctr_id,
+		product.prod_id,
+		ptype.ptype_sk,
+		ptype.ptype_id,
+		ptype.ptype_Desc,
+		product.prdvar_sk,
+		product.prod_desc,
+		product.var_id,
+		product.var_desc,
+		quality.qua_sk,
+		quality.qua_id,
+		quality.qua_desc,
+		size.size_sk,
+		size.size_id,
+		size.size_desc,
+		week_id
+)q1 left outer join (
+select
+  round(sum((price_inf_uni + price_sup_uni)/2)/count(1),2) promedio,
+  round(sum((price_inf_kilo + price_sup_kilo)/2)/count(1),2) promediokilo,
+  case when sum(price_inf_kilo) is null then
+	0
+	else count(1) end "numObs",
+  rangosemana(min(date_field)) RangoSemana,
+country.ctr_sk,
+product.prdvar_sk,
+ptype.ptype_sk,
+size.size_sk,
+quality.qua_sk,
+  product.prod_id,
+  ptype.ptype_id,
+  product.prod_desc||coalesce(' '||ptype_desc,'') prod_desc,
+  product.var_id,
+  product.var_desc,
+  quality.qua_id,
+  quality.qua_desc,
+  size.size_id,
+  size.size_desc,
+  fecha.week_id,
+  country.ctr_desc,
+  country.ctr_id,
+  substr(fecha.week_id::varchar,5,2) ||'-'|| substr(fecha.week_id::varchar,1,4) week_code,
+  origen.ori_country,
+  tunit.tunit_desc
+FROM
+  public.date_dim fecha,
+  public.product_variety_dim product,
+  public.product_type_dim ptype,
+  public.size_dim size,
+  public.quality_dim quality,
+  public.origin_dim origen,
+  public.trad_unit_dim tunit,
+  public.country_dim country,
+  public.price_fact price
+WHERE origen.ori_sk = price.ori_sk
+  and tunit.tunit_sk = price.tunit_sk
+  and price.ctr_sk = country.ctr_sk and
+	price.date_sk = fecha.date_sk and
+	tunit.tunit_sk = price.tunit_sk and
+	fecha.date_sk = price.date_sk AND
+	product.prdvar_sk = price.prdvar_sk AND
+	ptype.ptype_sk = price.ptype_sk AND
+	size.size_sk = price.size_sk AND
+	quality.qua_sk = price.qua_sk AND
+	origen.ori_sk = price.ori_sk
+  and (product.prdvar_sk, ptype.ptype_sk, quality.qua_Id, size.size_Id) IN ($P!{productFilters})
+  and country.ctr_id in ($P!{countries})
+  and fecha.date_field between to_date($P{initialWeek},'dd/mm/yyyy') and to_date($P{finalWeek},'dd/mm/yyyy')
+GROUP BY
+	country.ctr_sk,
+	country.ctr_desc,
+	country.ctr_id,
+	product.prod_id,
+	ptype.ptype_sk,
+	ptype.ptype_id,
+	ptype.ptype_Desc,
+	product.prdvar_sk,
+	product.prod_desc,
+	product.var_id,
+	product.var_desc,
+	quality.qua_sk,
+	quality.qua_id,
+	quality.qua_desc,
+	size.size_sk,
+	size.size_id,
+	size.size_desc,
+	week_id,
+	week_code,
+	ori_country,
+	tunit_desc
+) base ON base.ctr_sk = q1.ctr_sk
+	  and base.week_id = q1.week_id
+	  and base.prdvar_sk = q1.prdvar_sk
+	  and base.ptype_sk = q1.ptype_sk
+	  and base.size_sk = q1.size_sk
+	  and base.qua_sk = q1.qua_sk
+ORDER BY
+  q1.week_id,
+  prod_id,
+  ptype_id,
+  var_id,
+  qua_id,
+  size_id,
+  ctr_id]]>
+		</queryString>
+		<field name="promedio" class="java.math.BigDecimal"/>
+		<field name="promediokilo" class="java.math.BigDecimal"/>
+		<field name="numObs" class="java.lang.Long"/>
+		<field name="rangosemana" class="java.lang.String"/>
+		<field name="week_id" class="java.lang.Integer"/>
+		<field name="ctr_desc" class="java.lang.String"/>
+		<field name="ctr_id" class="java.lang.Integer"/>
+		<field name="prod_id" class="java.lang.Integer"/>
+		<field name="ptype_id" class="java.lang.Integer"/>
+		<field name="prod_desc" class="java.lang.String"/>
+		<field name="var_id" class="java.lang.Integer"/>
+		<field name="var_desc" class="java.lang.String"/>
+		<field name="qua_id" class="java.lang.Integer"/>
+		<field name="qua_desc" class="java.lang.String"/>
+		<field name="size_id" class="java.lang.Integer"/>
+		<field name="size_desc" class="java.lang.String"/>
+		<field name="week_code" class="java.lang.String"/>
+		<field name="ori_country" class="java.lang.String"/>
+		<field name="tunit_desc" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="GraphQuery">
+		<parameter name="productFilters" class="java.lang.String">
+			<defaultValueExpression><![CDATA["select 1,1,1,1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="countries" class="java.lang.String">
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="initialWeek" class="java.lang.String">
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="finalWeek" class="java.lang.String">
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+  round(sum((price_inf_uni + price_sup_uni)/2)/count(1),2) promedio,
+  round(sum((price_inf_kilo + price_sup_kilo)/2)/count(1),2) promediokilo,
+  count(1) "numObs",
+  rangosemana(min(date_field)) RangoSemana,
+  product.prod_id,
+  ptype.ptype_id,
+  product.prod_desc||coalesce(' '||ptype_desc,'') prod_desc,
+  product.var_id,
+  product.var_desc,
+  quality.qua_id,
+  quality.qua_desc,
+  size.size_id,
+  size.size_desc,
+  fecha.week_id,
+  substr(fecha.week_id::varchar,1,4)||'-'||substr(fecha.week_id::varchar,5,2) week_code,
+  origen.ori_country,
+  tunit.tunit_desc
+FROM
+  public.country_dim country,
+  public.price_fact price,
+  public.date_dim fecha,
+  public.product_variety_dim product,
+  public.product_type_dim ptype,
+  public.size_dim size,
+  public.quality_dim quality,
+  public.origin_dim origen,
+  public.trad_unit_dim tunit
+WHERE
+  tunit.tunit_sk = price.tunit_sk and
+  fecha.date_sk = price.date_sk AND
+  product.prdvar_sk = price.prdvar_sk AND
+  ptype.ptype_sk = price.ptype_sk AND
+  size.size_sk = price.size_sk AND
+  quality.qua_sk = price.qua_sk AND
+  country.ctr_sk = price.ctr_sk
+  and origen.ori_sk = price.ori_sk
+  and (product.prdvar_sk, ptype.ptype_sk, quality.qua_Id, size.size_Id) IN ($P!{productFilters})
+  and fecha.date_field between to_date($P{initialWeek},'dd/mm/yyyy')
+		and to_date($P{finalWeek},'dd/mm/yyyy')
+  and country.ctr_id in ($P!{countries})
+GROUP BY
+  ctr_desc,
+  country.ctr_id,
+  product.prod_id,
+  ptype.ptype_id,
+  ptype.ptype_desc,
+  product.prod_desc,
+  product.var_id,
+  product.var_desc,
+  quality.qua_id,
+  quality.qua_desc,
+  size.size_id,
+  size.size_desc,
+  week_id,
+  week_code,
+  ori_country,
+  tunit_desc
+ORDER BY
+  week_id,
+  product.prod_id,
+  ptype_id,
+  var_id,
+  qua_id,
+  size_id,
+  country.ctr_id]]>
+		</queryString>
+		<field name="promedio" class="java.math.BigDecimal"/>
+		<field name="promediokilo" class="java.math.BigDecimal"/>
+		<field name="numObs" class="java.lang.Long"/>
+		<field name="rangosemana" class="java.lang.String"/>
+		<field name="prod_id" class="java.lang.Integer"/>
+		<field name="ptype_id" class="java.lang.Integer"/>
+		<field name="prod_desc" class="java.lang.String"/>
+		<field name="var_id" class="java.lang.Integer"/>
+		<field name="var_desc" class="java.lang.String"/>
+		<field name="qua_id" class="java.lang.Integer"/>
+		<field name="qua_desc" class="java.lang.String"/>
+		<field name="size_id" class="java.lang.Integer"/>
+		<field name="size_desc" class="java.lang.String"/>
+		<field name="week_id" class="java.lang.Integer"/>
+		<field name="week_code" class="java.lang.String"/>
+		<field name="ori_country" class="java.lang.String"/>
+		<field name="tunit_desc" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="productFilters" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select 1,1,1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countries" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="initialWeek" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="finalWeek" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countriesDesc" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="urlSizeInfo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["http://localhost:8080/SIMEFRUT/getAction.do?accion=urlSizeInfo"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+$P{countries} countries,
+$P{initialWeek} initialWeek,
+$P{finalWeek} finalWeek,
+$P{productFilters} productFilters]]>
+	</queryString>
+	<field name="countries" class="java.lang.String"/>
+	<field name="initialweek" class="java.lang.String"/>
+	<field name="finalweek" class="java.lang.String"/>
+	<field name="productfilters" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="960" height="32" forecolor="#050505" backcolor="#FDFDFD"/>
+				<textElement textAlignment="Center">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Precio de Frutas en el Mercado Mayorista]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="42" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="160" height="20" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Periodo: "+$P{initialWeek} +" a " + $P{finalWeek}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="160" y="0" width="800" height="41" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Países: "+$P{countriesDesc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="200" splitType="Stretch">
+			<crosstab>
+				<reportElement x="0" y="0" width="1000" height="200"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="newQuery">
+							<datasetParameter name="productFilters">
+								<datasetParameterExpression><![CDATA[$F{productfilters}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="countries">
+								<datasetParameterExpression><![CDATA[$F{countries}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="initialWeek">
+								<datasetParameterExpression><![CDATA[$F{initialweek}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="finalWeek">
+								<datasetParameterExpression><![CDATA[$F{finalweek}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<crosstabHeaderCell>
+					<cellContents backcolor="#D7D7D7" mode="Transparent" style="Crosstab Data Text">
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="80" height="42" isPrintWhenDetailOverflows="true" backcolor="#D7D7D7"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Producto]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="80" y="0" width="80" height="42" isPrintWhenDetailOverflows="true" backcolor="#D7D7D7"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Variedad]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="160" y="0" width="60" height="42" isPrintWhenDetailOverflows="true" backcolor="#D7D7D7"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Calidad]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="220" y="0" width="60" height="42" isPrintWhenDetailOverflows="true" backcolor="#D7D7D7"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Tamaño]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="280" y="0" width="100" height="42" isPrintWhenDetailOverflows="true" backcolor="#D7D7D7"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[País Reportador]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="480" y="0" width="90" height="42" isPrintWhenDetailOverflows="true" backcolor="#D7D7D7"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Unidad Tradicional]]></text>
+						</staticText>
+						<staticText>
+							<reportElement mode="Opaque" x="620" y="0" width="110" height="42" backcolor="#E0E0E0"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Semana Comprendida entre]]></text>
+						</staticText>
+						<staticText>
+							<reportElement mode="Opaque" x="570" y="0" width="50" height="42" backcolor="#E0E0E0"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Número de Semana]]></text>
+						</staticText>
+						<textField>
+							<reportElement mode="Opaque" x="810" y="0" width="70" height="42" backcolor="#E0E0E0"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Precio Prom. \n(USD\$/Kg.)"]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement mode="Opaque" x="730" y="0" width="80" height="42" backcolor="#E0E0E0"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Precio Prom. \n(USD\$/Unidad Tradicional)"]]></textFieldExpression>
+						</textField>
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="380" y="0" width="100" height="42" isPrintWhenDetailOverflows="true" backcolor="#D7D7D7"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[País Origen]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="Producto" width="80" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{prod_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#E1E1E1" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Producto}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="Variedad" width="80" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{var_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#E1E1E1" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Variedad}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="Calidad" width="60" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{qua_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#E1E1E1" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="60" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Calidad}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="Tamaño" width="60" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{size_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#E1E1E1" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="60" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Tamaño}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="Pais" width="100" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{ctr_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#E1E1E1" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Pais}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="orictr_desc" width="100" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{ori_country}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{orictr_desc}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="Unidad" width="90" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{tunit_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="90" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{Unidad}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="weekId" width="0" headerPosition="Stretch">
+					<bucket class="java.lang.Integer">
+						<bucketExpression><![CDATA[$F{week_id}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents/>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="weekCode" width="50" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{week_code}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<textField isStretchWithOverflow="true" pattern="#####" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="50" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{weekCode}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="weekRange" width="110">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{rangosemana}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="110" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{weekRange}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="promedio" width="80">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{promedio}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<textField isStretchWithOverflow="true" pattern="###,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF">
+									<printWhenExpression><![CDATA[$V{promedio}!=null]]></printWhenExpression>
+								</reportElement>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{promedio}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="80" height="15" isPrintWhenDetailOverflows="true" forecolor="#FF0000" backcolor="#FFFFFF">
+									<printWhenExpression><![CDATA[$V{promedio}==null]]></printWhenExpression>
+								</reportElement>
+								<box topPadding="2" bottomPadding="2">
+									<pen lineColor="#000000"/>
+									<topPen lineWidth="0.5" lineColor="#000000"/>
+									<leftPen lineWidth="0.5" lineColor="#000000"/>
+									<bottomPen lineWidth="0.5" lineColor="#000000"/>
+									<rightPen lineWidth="0.5" lineColor="#000000"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["No Disponible"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="promedioKilo" width="70">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{promediokilo}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<textField isStretchWithOverflow="true" pattern="###,##0.00" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF">
+									<printWhenExpression><![CDATA[$V{promedioKilo}!=null]]></printWhenExpression>
+								</reportElement>
+								<box topPadding="2" bottomPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{promedioKilo}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true" forecolor="#FF0000" backcolor="#FFFFFF">
+									<printWhenExpression><![CDATA[$V{promedioKilo}==null]]></printWhenExpression>
+								</reportElement>
+								<box topPadding="2" bottomPadding="2">
+									<pen lineColor="#000000"/>
+									<topPen lineWidth="0.5" lineColor="#000000"/>
+									<leftPen lineWidth="0.5" lineColor="#000000"/>
+									<bottomPen lineWidth="0.5" lineColor="#000000"/>
+									<rightPen lineWidth="0.5" lineColor="#000000"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["No Disponible"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="Titulo" height="42" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[1]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#D7D7D7" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5"/>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="80" height="42" isPrintWhenDetailOverflows="true" backcolor="#D7D7D7"/>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[Número de Días Reportados]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="numObs" class="java.lang.Integer">
+					<measureExpression><![CDATA[$F{numObs}]]></measureExpression>
+				</measure>
+				<crosstabCell width="80" height="15">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="###,##0" isBlankWhenNull="false">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+							<box topPadding="2" bottomPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{numObs}==null?0:$V{numObs}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="Producto">
+					<cellContents backcolor="#6093BF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="Variedad">
+					<cellContents backcolor="#E6F3FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Calidad">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Tamaño">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Pais">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Producto" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Variedad" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Calidad" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Tamaño" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Pais" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Unidad">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="Unidad" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="weekId">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="weekId" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="weekRange">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="weekRange" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="promedio">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="promedio" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="promedioKilo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="promedioKilo" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="weekCode">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="weekCode" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="orictr_desc">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="orictr_desc" columnTotalGroup="Titulo">
+					<cellContents/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="136" splitType="Stretch">
+			<staticText>
+				<reportElement x="380" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[SIMEFRUT]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="30" width="160" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["sugiere revisar los pesos en el siguiente"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="18" width="810" height="12" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Recuerde que los tamaños mostrados en el reporte tienen rangos de peso que varían de país en país, por lo que para efectos de comparación de datos, se"]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="Reference" hyperlinkTarget="Blank">
+				<reportElement x="160" y="30" width="60" height="12" forecolor="#0000FF"/>
+				<textElement>
+					<font size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Link"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Link"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$P{urlSizeInfo}]]></hyperlinkReferenceExpression>
+				<hyperlinkTooltipExpression><![CDATA[$P{urlSizeInfo}]]></hyperlinkTooltipExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="42" width="960" height="94" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\nPrecio promedio: A nivel diario se calcula a través del promedio del rango del precio moda. A nivel semanal y mensual, es el promedio de los promedios diarios en el período seleccionado.\nNúmero de días reportados: en esta columna, se registran el número de días dentro de cada semana o mes en que se reportaron datos en el país de análisis.\n\nFuente de datos: Sistemas de información de mercados agrícolas (SIMAs) de la región centroamericana y República Dominicana."]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="419">
+			<lineChart>
+				<chart renderType="draw" theme="aegean">
+					<reportElement x="0" y="0" width="960" height="419" isPrintWhenDetailOverflows="true"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Precio de Frutas en el Mercado Mayorista"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend position="Top">
+						<font size="9"/>
+					</chartLegend>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="GraphQuery">
+							<datasetParameter name="productFilters">
+								<datasetParameterExpression><![CDATA[$F{productfilters}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="countries">
+								<datasetParameterExpression><![CDATA[$F{countries}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="initialWeek">
+								<datasetParameterExpression><![CDATA[$F{initialweek}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="finalWeek">
+								<datasetParameterExpression><![CDATA[$F{finalweek}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{ori_country}+" - " + $F{prod_desc}+ ($F{var_desc}==null?"":(" - "+$F{var_desc})) +" - "+$F{qua_desc}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{week_code}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{promediokilo}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<linePlot>
+					<plot>
+						<seriesColor seriesOrder="0" color="#FF0000"/>
+						<seriesColor seriesOrder="1" color="#0000FF"/>
+						<seriesColor seriesOrder="2" color="#00FF00"/>
+						<seriesColor seriesOrder="3" color="#FFFF00"/>
+						<seriesColor seriesOrder="4" color="#FF00FF"/>
+						<seriesColor seriesOrder="5" color="#000000"/>
+						<seriesColor seriesOrder="6" color="#00FFFF"/>
+					</plot>
+					<categoryAxisLabelExpression><![CDATA["Año-Semana"]]></categoryAxisLabelExpression>
+					<valueAxisLabelExpression><![CDATA["USD\$/(Kg.) Precios Prom. "]]></valueAxisLabelExpression>
+					<valueAxisFormat>
+						<axisFormat verticalTickLabels="false">
+							<labelFont>
+								<font size="10"/>
+							</labelFont>
+							<tickLabelFont>
+								<font size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</valueAxisFormat>
+				</linePlot>
+			</lineChart>
+		</band>
+	</summary>
+</jasperReport>

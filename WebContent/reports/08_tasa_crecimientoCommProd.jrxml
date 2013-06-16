@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TasaCrecimientoCommProd" language="groovy" pageWidth="2000" pageHeight="800" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="976"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="HideCol-Row" isDefault="true" fill="Solid">
+		<conditionalStyle>
+			<style/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="newQuery" whenResourceMissingType="Empty">
+		<parameter name="countries" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<parameter name="periods" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<parameter name="products" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<parameter name="types" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select prod_id,
+	prod_desc,
+	ctr_id,
+	ctr_desc,
+	case
+		when tipo = 'ExportKilo' then
+			'Volumen de Exportaciones en el Periodo(%)'
+		when tipo = 'ExportDollar' then
+			'Valor de Exportaciones en el Periodo(%)'
+		when tipo = 'ImportKilo' then
+			'Volumen de Importaciones en el Periodo(%)'
+		when tipo = 'ImportDollar' then
+			'Valor de Importaciones en el Periodo(%)'
+		when tipo = 'ProductionVol' then
+			'Volumen de Producción en el Periodo (%)'
+		when tipo = 'ProductionCost' then
+			'Costos de Producción en el Periodo (%)'
+		when tipo = 'HarvestedArea' then
+			'Área Cosechada en el Periodo(%)'
+		end tipo,
+	initial_year || ' - ' || final_year periodo,
+	initial_year,
+	final_year,
+	initial_value,
+	final_value,
+	tasa_crecimiento*100 tasa_crecimiento
+ from getTasaCrecimientoCommProd($P{types},$P{products},$P{countries},$P{periods})]]>
+		</queryString>
+		<field name="prod_id" class="java.lang.Integer"/>
+		<field name="prod_desc" class="java.lang.String"/>
+		<field name="ctr_id" class="java.lang.Integer"/>
+		<field name="ctr_desc" class="java.lang.String"/>
+		<field name="tipo" class="java.lang.String"/>
+		<field name="periodo" class="java.lang.String"/>
+		<field name="initial_year" class="java.lang.Integer"/>
+		<field name="final_year" class="java.lang.Integer"/>
+		<field name="initial_value" class="java.math.BigDecimal"/>
+		<field name="final_value" class="java.math.BigDecimal"/>
+		<field name="tasa_crecimiento" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="periods" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countries" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="products" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countriesDesc" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="types" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+$P{periods} periods,
+$P{countries} countries,
+$P{products} products,
+$P{types} types]]>
+	</queryString>
+	<field name="periods" class="java.lang.String"/>
+	<field name="countries" class="java.lang.String"/>
+	<field name="products" class="java.lang.String"/>
+	<field name="types" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="770" height="33" forecolor="#050505" backcolor="#FDFDFD"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tasa de Crecimiento Promedio]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="31" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="140" height="31" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Periodo: "+$P{periods}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="210" y="0" width="560" height="31" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Países: "+$P{countriesDesc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="371">
+			<printWhenExpression><![CDATA[true]]></printWhenExpression>
+			<crosstab>
+				<reportElement x="0" y="0" width="1960" height="371"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="newQuery">
+							<datasetParameter name="countries">
+								<datasetParameterExpression><![CDATA[$F{countries}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="periods">
+								<datasetParameterExpression><![CDATA[$F{periods}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="products">
+								<datasetParameterExpression><![CDATA[$F{products}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="types">
+								<datasetParameterExpression><![CDATA[$F{types}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<crosstabHeaderCell>
+					<cellContents backcolor="#D7D7D7" mode="Opaque">
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+						</box>
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="36"/>
+							<box>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Producto]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="70" y="0" width="70" height="36"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[País ]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="prod_desc" width="70" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{prod_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#DFDFDF" mode="Opaque" style="Crosstab Data Text">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true"/>
+								<box topPadding="2" bottomPadding="2"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{prod_desc}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="ctr_desc" width="70" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{ctr_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#DFDFDF" mode="Opaque" style="Crosstab Data Text">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true"/>
+								<box topPadding="2" bottomPadding="2"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{ctr_desc}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="tipo" height="21" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{tipo}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#D7D7D7" mode="Opaque">
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="21" isPrintWhenDetailOverflows="true"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Tasa de Crecimiento del " + $V{tipo}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="periodo" height="15" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{periodo}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#D7D7D7" mode="Opaque" style="Crosstab Data Text">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{periodo}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="tasaCrecimiento" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{tasa_crecimiento}]]></measureExpression>
+				</measure>
+				<crosstabCell width="70" height="15">
+					<cellContents mode="Opaque" style="Crosstab Data Text">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="#,##0.0" isBlankWhenNull="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true">
+								<printWhenExpression><![CDATA[$V{tasaCrecimiento}!=0]]></printWhenExpression>
+							</reportElement>
+							<box topPadding="2" bottomPadding="2"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font size="8"/>
+								<paragraph lineSpacing="Proportional" rightIndent="2"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{tasaCrecimiento}==0?null:$V{tasaCrecimiento}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true" forecolor="#FF0000">
+								<printWhenExpression><![CDATA[$V{tasaCrecimiento}==0]]></printWhenExpression>
+							</reportElement>
+							<box topPadding="2" bottomPadding="2"/>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="8"/>
+								<paragraph lineSpacing="Proportional" rightIndent="2"/>
+							</textElement>
+							<textFieldExpression><![CDATA["No Disp."]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="prod_desc">
+					<cellContents backcolor="#6093BF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="periodo">
+					<cellContents backcolor="#6093BF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="prod_desc" columnTotalGroup="periodo">
+					<cellContents backcolor="#6093BF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="ctr_desc">
+					<cellContents backcolor="#E6F3FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="ctr_desc" columnTotalGroup="periodo">
+					<cellContents backcolor="#6093BF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell columnTotalGroup="tipo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="prod_desc" columnTotalGroup="tipo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="ctr_desc" columnTotalGroup="tipo">
+					<cellContents/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="127" splitType="Stretch">
+			<staticText>
+				<reportElement x="490" y="0" width="70" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[SIMEFRUT]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="15" width="770" height="112" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tasa de crecimiento promedio anual sigue el patrón de crecimiento exponencial\n\nFórmula: Yt = Yo * e*(r*t) , donde r es la tasa de crecimiento, Yo es el valor inicial del período, Yt es el valor final del período y t es el número de años dentro del período.\n\nFuente de datos: SIMAs recopilan datos aunque no necesariamente generan estos datos"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,927 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MatrizCompetitividad" language="groovy" pageWidth="1200" pageHeight="700" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="HideCol-Row" isDefault="true" fill="Solid">
+		<conditionalStyle>
+			<style/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="newQuery" whenResourceMissingType="Empty">
+		<parameter name="offererCountry" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["select ctr_id from countries_ctg"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="initialDate" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="finalDate" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="products" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["select faoprod_sk from product_faostat_dim"]]></defaultValueExpression>
+		</parameter>
+		<parameter name="destinationCountry" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA["10"]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select *,
+	case when DinamicaDelNegocio-DinamicaDelNegocioTotal>=0
+			and TamanioDelNegocio-TamanioDelNegocioTotal>=0 then
+		'Productos altamente atractivos'
+
+	when DinamicaDelNegocio-DinamicaDelNegocioTotal>=0
+			and TamanioDelNegocio-TamanioDelNegocioTotal<0 then
+		'Productos Promisorios'
+	when DinamicaDelNegocio-DinamicaDelNegocioTotal<0
+			and TamanioDelNegocio-TamanioDelNegocioTotal<0 then
+		'Productos de menor interes'
+	when DinamicaDelNegocio-DinamicaDelNegocioTotal<0
+			and TamanioDelNegocio-TamanioDelNegocioTotal>=0 then
+		'Productos potenciales'
+	end clasificacion
+from (
+select --totalyo.grp_id, totalyo.grp_desc, 
+	totalyo.ImportDollarYo, totalyt.ImportDollarYt,
+round((ln(totalyt.ImportDollarYt) - ln(totalyo.ImportDollarYo))/abs($P!{finalDate}-$P!{initialDate}),8) DinamicaDelNegocioTotal,
+	round((totalimportsum.ImportDollarSum *100)/abs($P!{finalDate}-$P!{initialDate}+1),8) TamanioDelNegocioTotal,
+	yo.prod_id, yo.prod_desc producto, yo.ctr_id, yo.ctr_desc origen,
+	$P!{initialDate} initialYear, $P!{finalDate} finalYear, --yo.orictr_id, yo.orictr_desc destination,
+	yo.ImportDollarYo initial_value, yt.ImportDollarYt final_value,
+	round((ln(yt.ImportDollarYt) - ln(yo.ImportDollarYo))/abs($P!{finalDate}-$P!{initialDate}),8) DinamicaDelNegocio,
+	round((importsum.ImportDollarSum * 100)/abs($P!{finalDate}-$P!{initialDate}+1),4) TamanioDelNegocio
+from (
+	SELECT
+	  sum(commerce.fao_dollar) ImportDollarYt,
+	  year.year_sk anio,
+	  country.ctr_desc,
+	  country.ctr_id,
+	  product.prod_id,
+	  product.prod_desc/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id orictr_id,
+	  destination.ctr_desc orictr_desc*/
+	FROM
+	  public.commerce_faostat_fact commerce,
+	  public.year_dim year,
+	  public.product_dim product,
+	  public.product_faostat_dim faoprod,
+	  public.country_dim country,
+	  public.country_dim destination
+	WHERE
+	  commerce.faoprod_sk = faoprod.faoprod_sk AND
+	  product.prod_sk = faoprod.prod_sk AND
+	  commerce.ctr_sk = country.ctr_sk AND
+	  commerce.year_sk = year.year_sk
+	  and destination.ctr_sk = commerce.orictr_sk
+	  and commerce.fao_type = 'I'
+	  and commerce.year_sk  = $P!{finalDate}
+	  AND country.ctr_id in ($P!{destinationCountry})
+	  --AND destination.ctr_id in ($P!{offererCountry})
+	  and product.prod_id in ($P!{products})
+	 group by
+	 year.year_sk ,
+	  country.ctr_desc,
+	  country.ctr_id,
+	  product.prod_id,
+	  product.prod_desc/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id,
+	  destination.ctr_desc*/
+) yt, (
+	SELECT
+	  sum(commerce.fao_dollar) ImportDollarYo,
+	  year.year_sk anio,
+	  country.ctr_desc,
+	  country.ctr_id,
+	  product.prod_id,
+	  product.prod_desc/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id orictr_id,
+	  destination.ctr_desc orictr_desc*/
+	FROM
+	  public.commerce_faostat_fact commerce,
+	  public.year_dim year,
+	  public.product_dim product,
+	  public.product_faostat_dim faoprod,
+	  public.country_dim country,
+	  public.country_dim destination
+	WHERE
+	  commerce.faoprod_sk = faoprod.faoprod_sk AND
+	  product.prod_sk = faoprod.prod_sk AND
+	  commerce.ctr_sk = country.ctr_sk AND
+	  commerce.year_sk = year.year_sk
+	  and destination.ctr_sk = commerce.orictr_sk
+	  and commerce.fao_type = 'I'
+	  and commerce.year_sk  = $P!{initialDate}
+	  AND country.ctr_id in ($P!{destinationCountry})
+	  --AND destination.ctr_id in ($P!{offererCountry})
+	  and product.prod_id in ($P!{products})
+	 group by
+	 year.year_sk ,
+	  country.ctr_desc,
+	  country.ctr_id,
+	  product.prod_id,
+	  product.prod_desc/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id,
+	  destination.ctr_desc*/
+ ) yo,(
+	SELECT
+	  sum(commerce.fao_dollar) ImportDollarYt,
+	  year.year_sk anio,
+	  country.ctr_desc,
+	  country.ctr_id/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id orictr_id,
+	  destination.ctr_desc orictr_desc*/
+	FROM
+	  public.commerce_faostat_fact commerce,
+	  public.year_dim year,
+	  public.product_faostat_dim faoprod,
+	  public.product_dim product, --
+	  public.country_dim country,
+	  public.country_dim destination
+	WHERE
+	  commerce.faoprod_sk = faoprod.faoprod_sk AND
+	  commerce.ctr_sk = country.ctr_sk AND
+	  product.prod_sk = faoprod.prod_sk AND --
+	  commerce.year_sk = year.year_sk
+	  and destination.ctr_sk = commerce.orictr_sk
+	  and commerce.fao_type = 'I'
+	  and commerce.year_sk  = $P!{finalDate}
+	  AND country.ctr_id in ($P!{destinationCountry})
+	  --AND destination.ctr_id in ($P!{offererCountry})
+	  and product.prod_id in ($P!{products}) --
+	  /*and faoprod.grp_id in (select grp_id
+					from product_faostat_dim a, product_dim b
+					where a.prod_sk = b.prod_sk
+					  and b.prod_id in ($P!{products})
+				)*/
+	 group by
+	 year.year_sk ,
+	  country.ctr_desc,
+	  country.ctr_id/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id,
+	  destination.ctr_desc*/
+) totalyt, (
+	SELECT
+	  sum(commerce.fao_dollar) ImportDollarYo,
+	  year.year_sk anio,
+	  country.ctr_desc,
+	  country.ctr_id/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id orictr_id,
+	  destination.ctr_desc orictr_desc*/
+	FROM
+	  public.commerce_faostat_fact commerce,
+	  public.year_dim year,
+	  public.product_faostat_dim faoprod,
+	  public.product_dim product, --
+	  public.country_dim country,
+	  public.country_dim destination
+	WHERE
+	  commerce.faoprod_sk = faoprod.faoprod_sk AND
+	  commerce.ctr_sk = country.ctr_sk AND
+	  product.prod_sk = faoprod.prod_sk AND --
+	  commerce.year_sk = year.year_sk
+	  and destination.ctr_sk = commerce.orictr_sk
+	  and commerce.fao_type = 'I'
+	  and commerce.year_sk  = $P!{initialDate}
+	  AND country.ctr_id in ($P!{destinationCountry})
+	  --AND destination.ctr_id in ($P!{offererCountry})
+	  and product.prod_id in ($P!{products}) --
+	  /*and faoprod.grp_id in (select grp_id
+					from product_faostat_dim a, product_dim b
+					where a.prod_sk = b.prod_sk
+					  and b.prod_id in ($P!{products})
+				)*/
+	 group by
+	 year.year_sk ,
+	  country.ctr_desc,
+	  country.ctr_id/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id,
+	  destination.ctr_desc*/
+ ) totalyo,(
+	SELECT
+	  sum(commerce.fao_dollar) ImportDollarSum,
+	  country.ctr_desc,
+	  country.ctr_id,
+	  product.prod_id,
+	  product.prod_desc/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id orictr_id,
+	  destination.ctr_desc orictr_desc*/
+	FROM
+	  public.commerce_faostat_fact commerce,
+	  public.year_dim year,
+	  public.product_dim product,
+	  public.product_faostat_dim faoprod,
+	  public.country_dim country,
+	  public.country_dim destination
+	WHERE
+	  commerce.faoprod_sk = faoprod.faoprod_sk AND
+	  product.prod_sk = faoprod.prod_sk AND
+	  commerce.ctr_sk = country.ctr_sk AND
+	  commerce.year_sk = year.year_sk
+	  and destination.ctr_sk = commerce.orictr_sk
+	  and commerce.fao_type = 'I'
+	  and commerce.year_sk  between $P!{initialDate} and $P!{finalDate}
+	  AND country.ctr_id in ($P!{destinationCountry})
+	  --AND destination.ctr_id in ($P!{offererCountry})
+	  and product.prod_id in ($P!{products})
+	 group by
+	  country.ctr_desc,
+	  country.ctr_id,
+	  product.prod_id,
+	  product.prod_desc/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id,
+	  destination.ctr_desc*/
+ ) importSum,(
+	SELECT
+	  sum(commerce.fao_dollar) ImportDollarSum,
+	  country.ctr_desc,
+	  country.ctr_id/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id orictr_id,
+	  destination.ctr_desc orictr_desc*/
+	FROM
+	  public.commerce_faostat_fact commerce,
+	  public.year_dim year,
+	  public.product_faostat_dim faoprod,
+	  public.product_dim product, --
+	  public.country_dim country,
+	  public.country_dim destination
+	WHERE
+	  commerce.faoprod_sk = faoprod.faoprod_sk AND
+	  commerce.ctr_sk = country.ctr_sk AND
+	  product.prod_sk = faoprod.prod_sk AND --
+	  commerce.year_sk = year.year_sk
+	  and destination.ctr_sk = commerce.orictr_sk
+	  and commerce.fao_type = 'I'
+	  and commerce.year_sk  between $P!{initialDate} and $P!{finalDate}
+	  AND country.ctr_id in ($P!{destinationCountry})
+	  --AND destination.ctr_id in ($P!{offererCountry})
+	  and product.prod_id in ($P!{products}) --
+	  /*and faoprod.grp_id in (select grp_id
+					from product_faostat_dim a, product_dim b
+					where a.prod_sk = b.prod_sk
+					  and b.prod_id in ($P!{products})
+				)*/
+	 group by
+	  country.ctr_desc,
+	  country.ctr_id/*,
+	  faoprod.grp_id,
+	  faoprod.grp_desc,
+	  destination.ctr_id,
+	  destination.ctr_desc*/
+ )totalImportSum
+ where yo.ctr_id = yt.ctr_id
+ and yo.prod_id = yt.prod_id
+ /*and yo.orictr_id = yt.orictr_id
+ and totalyo.grp_id = totalyt.grp_id*/
+ and totalyo.ctr_id = totalyt.ctr_id
+ /*and totalyo.orictr_id = totalyt.orictr_id
+ and totalyo.grp_id = yo.grp_id*/
+ and totalyo.ctr_id = yo.ctr_id
+ /*and totalyo.orictr_id = yo.orictr_id
+ and totalyt.grp_id = yt.grp_id*/
+ and totalyt.ctr_id = yt.ctr_id
+ --and totalyt.orictr_id = yt.orictr_id
+ and importsum.ctr_id = yt.ctr_id
+ and importsum.prod_id = yt.prod_id
+ --and importsum.orictr_id = yt.orictr_id
+ and totalImportSum.ctr_id = totalyo.ctr_id
+ /*and totalImportSum.grp_id = totalyo.grp_id
+ and totalImportSum.orictr_id = totalyo.orictr_id*/
+) consulta]]>
+		</queryString>
+		<field name="grp_id" class="java.math.BigDecimal"/>
+		<field name="grp_desc" class="java.lang.String"/>
+		<field name="importdollaryo" class="java.math.BigDecimal"/>
+		<field name="importdollaryt" class="java.math.BigDecimal"/>
+		<field name="dinamicadelnegociototal" class="java.math.BigDecimal"/>
+		<field name="tamaniodelnegociototal" class="java.math.BigDecimal"/>
+		<field name="prod_id" class="java.lang.Integer"/>
+		<field name="producto" class="java.lang.String"/>
+		<field name="ctr_id" class="java.lang.Integer"/>
+		<field name="origen" class="java.lang.String"/>
+		<field name="initialyear" class="java.lang.Integer"/>
+		<field name="finalyear" class="java.lang.Integer"/>
+		<field name="orictr_id" class="java.lang.Integer"/>
+		<field name="destination" class="java.lang.String"/>
+		<field name="initial_value" class="java.math.BigDecimal"/>
+		<field name="final_value" class="java.math.BigDecimal"/>
+		<field name="dinamicadelnegocio" class="java.math.BigDecimal"/>
+		<field name="tamaniodelnegocio" class="java.math.BigDecimal"/>
+		<field name="clasificacion" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="offererCountry" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="initialDate" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="finalDate" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="products" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countriesDesc" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="destinationCountry" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+$P{finalDate} finalDate,
+$P{initialDate} initialDate,
+$P{offererCountry} offererCountry,
+$P{products} products,
+$P{destinationCountry} destinationCountry]]>
+	</queryString>
+	<field name="finaldate" class="java.lang.String"/>
+	<field name="initialdate" class="java.lang.String"/>
+	<field name="offerercountry" class="java.lang.String"/>
+	<field name="products" class="java.lang.String"/>
+	<field name="destinationcountry" class="java.lang.String"/>
+	<group name="Grafico">
+		<groupExpression><![CDATA[1]]></groupExpression>
+		<groupFooter>
+			<band height="448">
+				<scatterChart>
+					<chart isShowLegend="false" renderType="draw" theme="aegean">
+						<reportElement x="0" y="0" width="760" height="448">
+							<printWhenExpression><![CDATA[false]]></printWhenExpression>
+						</reportElement>
+						<chartTitle position="Top"/>
+						<chartSubtitle/>
+						<chartLegend position="Top"/>
+					</chart>
+					<xyDataset>
+						<dataset>
+							<datasetRun subDataset="newQuery">
+								<datasetParameter name="offererCountry">
+									<datasetParameterExpression><![CDATA[$F{offerercountry}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="initialDate">
+									<datasetParameterExpression><![CDATA[$F{initialdate}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="finalDate">
+									<datasetParameterExpression><![CDATA[$F{finaldate}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="products">
+									<datasetParameterExpression><![CDATA[$F{products}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="destinationCountry">
+									<datasetParameterExpression><![CDATA[$F{destinationcountry}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+						<xySeries>
+							<seriesExpression><![CDATA[$F{origen} +" - " +$F{producto}]]></seriesExpression>
+							<xValueExpression><![CDATA[$F{tamaniodelnegocio}-13]]></xValueExpression>
+							<yValueExpression><![CDATA[$F{dinamicadelnegocio}]]></yValueExpression>
+							<labelExpression><![CDATA["Aqui"]]></labelExpression>
+						</xySeries>
+						<xySeries>
+							<seriesExpression><![CDATA[""]]></seriesExpression>
+							<xValueExpression><![CDATA[0]]></xValueExpression>
+							<yValueExpression><![CDATA[0]]></yValueExpression>
+						</xySeries>
+					</xyDataset>
+					<scatterPlot isShowLines="false" isShowShapes="true">
+						<plot/>
+						<xAxisFormat>
+							<axisFormat labelColor="#FFFFFF" tickLabelColor="#FFFFFF" verticalTickLabels="false" axisLineColor="#FFFFFF"/>
+						</xAxisFormat>
+						<yAxisFormat>
+							<axisFormat labelColor="#FFFFFF" tickLabelColor="#FFFFFF" verticalTickLabels="false" axisLineColor="#FFFFFF"/>
+						</yAxisFormat>
+					</scatterPlot>
+				</scatterChart>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="800" height="30" forecolor="#050505" backcolor="#FDFDFD"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matriz de Competitividad]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="60" splitType="Stretch">
+			<textField>
+				<reportElement mode="Transparent" x="0" y="0" width="200" height="18" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Periodo: "+$P{initialDate} + " - " + $P{finalDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="200" y="0" width="600" height="55" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Países: "+$P{countriesDesc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="471">
+			<printWhenExpression><![CDATA[true]]></printWhenExpression>
+			<crosstab>
+				<reportElement x="0" y="0" width="1160" height="471"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="newQuery">
+							<datasetParameter name="offererCountry">
+								<datasetParameterExpression><![CDATA[$F{offerercountry}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="initialDate">
+								<datasetParameterExpression><![CDATA[$F{initialdate}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="finalDate">
+								<datasetParameterExpression><![CDATA[$F{finaldate}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="products">
+								<datasetParameterExpression><![CDATA[$F{products}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="destinationCountry">
+								<datasetParameterExpression><![CDATA[$F{destinationcountry}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<crosstabHeaderCell>
+					<cellContents>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Producto"]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="300" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["País Oferente"]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="500" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["País destino"]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Rubro Agrícola"]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="200" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Promedio Dinámica del Negocio %"]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="100" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Promedio Tamaño del Negocio USD\$"]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="grupoAgricola" width="100" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{grp_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{grupoAgricola}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="promedioTamanioNegocio" width="100" headerPosition="Stretch">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{tamaniodelnegociototal}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<textField isStretchWithOverflow="true" pattern="###,##0.0###">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{promedioTamanioNegocio}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="promedioDinamicaNegocio" width="100" headerPosition="Stretch">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{dinamicadelnegociototal}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<textField isStretchWithOverflow="true" pattern="###,##0.0#####">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{promedioDinamicaNegocio}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="destination" width="100" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{destination}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{destination}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="producto" width="100" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{producto}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{producto}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="origen" width="100" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{origen}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{origen}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="dummy" height="30" headerPosition="Stretch">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[1]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Tamaño del negocio en USD\$ "]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="100" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Dinámica del negocio en %"]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Opaque" x="200" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+								<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Clasificación"]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="dinamicaMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{dinamicadelnegocio}]]></measureExpression>
+				</measure>
+				<measure name="tamanioMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{tamaniodelnegocio}]]></measureExpression>
+				</measure>
+				<measure name="clasificacionMeasure" class="java.lang.String">
+					<measureExpression><![CDATA[$F{clasificacion}]]></measureExpression>
+				</measure>
+				<crosstabCell width="300" height="15">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="###,##0.0#####">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="100" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{dinamicaMeasure}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true" pattern="###,##0.0###">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="100" height="15" isPrintWhenDetailOverflows="true"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{tamanioMeasure}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true" pattern="###,##0.0#####">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="200" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+							<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{clasificacionMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="producto">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="dummy">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="producto" columnTotalGroup="dummy">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="origen">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="origen" columnTotalGroup="dummy">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="destination">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="destination" columnTotalGroup="dummy">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="grupoAgricola">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="grupoAgricola" columnTotalGroup="dummy">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="promedioTamanioNegocio">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="promedioTamanioNegocio" columnTotalGroup="dummy">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="promedioDinamicaNegocio">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="promedioDinamicaNegocio" columnTotalGroup="dummy">
+					<cellContents/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="34" splitType="Stretch">
+			<staticText>
+				<reportElement x="400" y="0" width="100" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[SIMEFRUT]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="708" y="14" width="44" height="14" backcolor="#FDFDFD">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="14" width="706" height="14" backcolor="#FDFDFD">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PreciosCIF" language="groovy" pageWidth="1600" pageHeight="700" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="62"/>
+	<property name="ireport.y" value="1252"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="HideCol-Row" isDefault="true" fill="Solid">
+		<conditionalStyle>
+			<style/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="newQuery" whenResourceMissingType="Empty">
+		<parameter name="originCountries" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<parameter name="initialDate" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<parameter name="finalDate" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<parameter name="destinationCountry" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<parameter name="products" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+  round (commerce1.comm_cifob,4) cif,
+  commerce1.orictr_sk ,
+  commerce1.comm_type tipo,
+  year1.year_sk anio,
+  destino1.ctr_desc destino_desc,
+  country1.ctr_desc origen,
+  country1.ctr_id,
+  product1.prod_id,
+  product1.prod_desc producto
+FROM
+  public.commerce_fact commerce1,
+  public.year_dim year1,
+  public.product_dim product1,
+  public.country_dim country1,
+  public.country_dim destino1
+
+WHERE
+  commerce1.prod_sk = product1.prod_sk AND
+  commerce1.ctr_sk = country1.ctr_sk AND
+  commerce1.year_sk = year1.year_sk AND
+  commerce1.orictr_sk = destino1.ctr_sk AND
+  commerce1.comm_type IN ('I','i')
+  and destino1.ctr_id in ($P!{destinationCountry})
+  and country1.ctr_id in ($P!{originCountries})
+  and product1.prod_id in ($P!{products})
+  and commerce1.year_sk between $P!{initialDate} and $P!{finalDate}
+ORDER BY
+  year1.year_sk]]>
+		</queryString>
+		<field name="cif" class="java.math.BigDecimal"/>
+		<field name="orictr_sk" class="java.math.BigDecimal"/>
+		<field name="tipo" class="java.lang.String"/>
+		<field name="anio" class="java.math.BigDecimal"/>
+		<field name="destino_desc" class="java.lang.String"/>
+		<field name="origen" class="java.lang.String"/>
+		<field name="ctr_id" class="java.lang.Integer"/>
+		<field name="prod_id" class="java.lang.Integer"/>
+		<field name="producto" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="originCountries" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="initialDate" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="finalDate" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="destinationCountry" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="products" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countriesDesc" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select $P{destinationCountry} destinationCountry,
+$P{finalDate} finalDate,
+$P{initialDate} initialDate,
+$P{originCountries} originCountries,
+$P{products} products]]>
+	</queryString>
+	<field name="destinationcountry" class="java.lang.String"/>
+	<field name="finaldate" class="java.lang.String"/>
+	<field name="initialdate" class="java.lang.String"/>
+	<field name="origincountries" class="java.lang.String"/>
+	<field name="products" class="java.lang.String"/>
+	<group name="Grafico CIF">
+		<groupExpression><![CDATA[1]]></groupExpression>
+		<groupFooter>
+			<band height="488">
+				<lineChart>
+					<chart isShowLegend="true" renderType="draw" theme="aegean">
+						<reportElement x="0" y="0" width="770" height="488"/>
+						<chartTitle position="Top">
+							<font size="12"/>
+							<titleExpression><![CDATA["Precio de Importación CIF de Frutas por País"]]></titleExpression>
+						</chartTitle>
+						<chartSubtitle/>
+						<chartLegend position="Top">
+							<font size="9"/>
+						</chartLegend>
+					</chart>
+					<categoryDataset>
+						<dataset>
+							<datasetRun subDataset="newQuery">
+								<datasetParameter name="originCountries">
+									<datasetParameterExpression><![CDATA[$F{origincountries}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="initialDate">
+									<datasetParameterExpression><![CDATA[$F{initialdate}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="finalDate">
+									<datasetParameterExpression><![CDATA[$F{finaldate}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="destinationCountry">
+									<datasetParameterExpression><![CDATA[$F{destinationcountry}]]></datasetParameterExpression>
+								</datasetParameter>
+								<datasetParameter name="products">
+									<datasetParameterExpression><![CDATA[$F{products}]]></datasetParameterExpression>
+								</datasetParameter>
+							</datasetRun>
+						</dataset>
+						<categorySeries>
+							<seriesExpression><![CDATA[$F{destino_desc}+($F{producto}==null?"":(" - "+$F{producto}))+" - "+$F{origen}]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{anio}]]></categoryExpression>
+							<valueExpression><![CDATA[$F{cif}]]></valueExpression>
+							<labelExpression><![CDATA[$F{origen}]]></labelExpression>
+						</categorySeries>
+					</categoryDataset>
+					<linePlot>
+						<plot>
+							<seriesColor seriesOrder="0" color="#FF0000"/>
+							<seriesColor seriesOrder="1" color="#0000FF"/>
+							<seriesColor seriesOrder="2" color="#00FF00"/>
+							<seriesColor seriesOrder="3" color="#FFFF00"/>
+							<seriesColor seriesOrder="4" color="#FF00FF"/>
+							<seriesColor seriesOrder="5" color="#000000"/>
+							<seriesColor seriesOrder="6" color="#00FFFF"/>
+						</plot>
+						<categoryAxisLabelExpression><![CDATA["Años"]]></categoryAxisLabelExpression>
+						<categoryAxisFormat>
+							<axisFormat verticalTickLabels="true">
+								<labelFont>
+									<font size="7"/>
+								</labelFont>
+								<tickLabelFont>
+									<font size="7"/>
+								</tickLabelFont>
+							</axisFormat>
+						</categoryAxisFormat>
+						<valueAxisLabelExpression><![CDATA["CIF"]]></valueAxisLabelExpression>
+						<valueAxisFormat>
+							<axisFormat>
+								<labelFont>
+									<font size="7"/>
+								</labelFont>
+								<tickLabelFont>
+									<font size="7"/>
+								</tickLabelFont>
+							</axisFormat>
+						</valueAxisFormat>
+					</linePlot>
+				</lineChart>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="770" height="30" forecolor="#050505" backcolor="#FDFDFD"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Precio de Importación CIF de Frutas por País]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="60" splitType="Stretch">
+			<textField>
+				<reportElement mode="Transparent" x="0" y="0" width="140" height="18" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Periodo: "+$P{initialDate} + " a " + $P{finalDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="210" y="0" width="560" height="55" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Países: "+$P{countriesDesc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="471">
+			<printWhenExpression><![CDATA[true]]></printWhenExpression>
+			<crosstab columnBreakOffset="8" ignoreWidth="false">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="1560" height="471" isPrintWhenDetailOverflows="true"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="newQuery">
+							<datasetParameter name="originCountries">
+								<datasetParameterExpression><![CDATA[$F{origincountries}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="initialDate">
+								<datasetParameterExpression><![CDATA[$F{initialdate}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="finalDate">
+								<datasetParameterExpression><![CDATA[$F{finaldate}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="destinationCountry">
+								<datasetParameterExpression><![CDATA[$F{destinationcountry}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="products">
+								<datasetParameterExpression><![CDATA[$F{products}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<crosstabHeaderCell>
+					<cellContents backcolor="#D7D7D7" mode="Opaque">
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+						</box>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="140" y="0" width="70" height="22"/>
+							<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[País Origen/Destino]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="70" y="0" width="70" height="22"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[Producto]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="70" height="22"/>
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<text><![CDATA[País de Análisis]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="ctr_desc" width="70" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{origen}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#E1E1E1" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true"/>
+								<box topPadding="2" bottomPadding="2"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{ctr_desc}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="prod_desc" width="70" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{producto}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#E1E1E1" mode="Opaque" style="Crosstab Data Text">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true"/>
+								<box topPadding="2" bottomPadding="2"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{prod_desc}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="destino_desc" width="70" headerPosition="Middle">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{destino_desc}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#E1E1E1" mode="Opaque">
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="70" height="15" isPrintWhenDetailOverflows="true"/>
+								<box topPadding="2" bottomPadding="2"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph lineSpacing="Proportional"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{destino_desc}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="titulo" height="11" headerPosition="Stretch">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[1]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#D7D7D8" mode="Opaque">
+							<box>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="40" height="11" isPrintWhenDetailOverflows="true"/>
+								<textElement verticalAlignment="Top">
+									<font size="8"/>
+									<paragraph lineSpacing="Single"/>
+								</textElement>
+								<text><![CDATA[Precio de Importación CIF en USD$/Kg.]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="anio" height="11" headerPosition="Stretch">
+					<bucket class="java.lang.Integer">
+						<bucketExpression><![CDATA[$F{anio}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#D7D7D7" mode="Opaque" style="Crosstab Data Text">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="40" height="11" isPrintWhenDetailOverflows="true"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8" isStrikeThrough="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{anio}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="CIF_Measure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{cif}]]></measureExpression>
+				</measure>
+				<crosstabCell width="40" height="15">
+					<cellContents mode="Opaque" style="Crosstab Data Text">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="40" height="15" isPrintWhenDetailOverflows="true">
+								<printWhenExpression><![CDATA[$V{CIF_Measure}!=null]]></printWhenExpression>
+							</reportElement>
+							<box topPadding="2" bottomPadding="2"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font size="8" isStrikeThrough="false"/>
+								<paragraph lineSpacing="Proportional" rightIndent="2"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{CIF_Measure}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+							<reportElement style="Crosstab Data Text" stretchType="RelativeToBandHeight" x="0" y="0" width="40" height="15" isPrintWhenDetailOverflows="true" forecolor="#FF0000">
+								<printWhenExpression><![CDATA[$V{CIF_Measure}==null || $V{CIF_Measure}==0]]></printWhenExpression>
+							</reportElement>
+							<box topPadding="2" bottomPadding="2"/>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="8" isStrikeThrough="false"/>
+								<paragraph lineSpacing="Proportional" rightIndent="2"/>
+							</textElement>
+							<textFieldExpression><![CDATA["No Disp."]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="prod_desc">
+					<cellContents backcolor="#6093BF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{CIF_Measure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="anio">
+					<cellContents backcolor="#E6F3FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="prod_desc" columnTotalGroup="anio">
+					<cellContents backcolor="#6093BF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="ctr_desc">
+					<cellContents backcolor="#E6F3FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="ctr_desc" columnTotalGroup="anio">
+					<cellContents backcolor="#E6F3FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="destino_desc">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="destino_desc" columnTotalGroup="anio">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell columnTotalGroup="titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="destino_desc" columnTotalGroup="titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="prod_desc" columnTotalGroup="titulo">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="ctr_desc" columnTotalGroup="titulo">
+					<cellContents/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="82" splitType="Stretch">
+			<staticText>
+				<reportElement x="490" y="0" width="80" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[SIMEFRUT]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="15" width="770" height="67" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CIF: Se calcula al dividir las importaciones en valor de un producto entre sus importaciones en monto. Esto se hace para cada país de origen de importación de un producto.\nPaís origen: se refiere al país de donde proviene el producto importado por el país de análisis\n\nFuente de datos: SIMAs, a través de sus fuentes oficiales que en la mayoría de los casos son los bancos centrales de cada país.\n\nSe sugiere complementar este reporte con los reportes de importaciones en volumen y valor para verificar si es un precio representativo."]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

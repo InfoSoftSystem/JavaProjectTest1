@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Diario" language="groovy" pageWidth="1192" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1152" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="21"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#E6F3FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#BBA8A8">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFE6E6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#BBA8A8">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFE6E6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="productFilters" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select 1,1,1,1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countries" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="initialDate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="countriesDesc" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="urlSizeInfo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["http://localhost:8080/SIMEFRUT/getAction.do?accion=urlSizeInfo"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT distinct
+     price_inf_uni precioMin,
+     price_sup_uni precioMax,
+     price_inf_kilo precioKgMin,
+     price_sup_kilo  precioKgMax,
+     anio,
+     price_inf_kilo,
+     price_sup_kilo,
+     q1."ctr_desc",
+     q1."ctr_id",
+     q1.prod_id,
+     q1.ptype_id,
+     q1.prod_desc,
+     q1.var_id,
+     q1.var_desc,
+     q1.qua_id,
+     q1.qua_desc,
+     q1.size_id,
+     q1.size_desc,
+     q1.date_field,
+     q1.month_id,
+     ori_country,
+     tunit_desc
+FROM
+(select country.ctr_sk, country.ctr_id, country.ctr_desc,
+	product.prdvar_sk, product.prod_id, product.prod_desc||coalesce(' '||ptype.ptype_desc,'') prod_desc, product.var_id, product.var_desc,
+	quality.qua_sk, quality.qua_id, quality.qua_desc,
+	size.size_sk, size.size_id, size.size_desc,
+	ptype.ptype_sk, ptype.ptype_id, ptype.ptype_desc,
+	fecha.date_sk, fecha.date_field, fecha.month_id
+	from
+		public.country_dim country,
+		public.date_dim fecha,
+		PRODUCt_variety_dim product,
+		public.product_type_dim ptype,
+		public.size_dim size,
+		public.quality_dim quality
+	where 1=1
+	  and ptype.prod_id = product.prod_id
+	  and current_date between country.effective_date and country.expiry_date
+	  and current_date between product.effective_date and product.expiry_date
+	  and current_date between ptype.effective_date and ptype.expiry_date
+	  and current_date between size.effective_date and size.expiry_date
+	  and current_date between quality.effective_date and quality.expiry_date
+	  and country.ctr_id IN ($P!{countries})
+	  and fecha.date_field = to_date($P{initialDate},'dd/mm/yyyy')
+	  and (product.prdvar_sk, ptype.ptype_sk, quality.qua_Id, size.size_Id) IN ($P!{productFilters})
+) q1 full outer join ( select price.price_inf_uni ,
+     price.price_sup_uni ,
+     price.price_inf_kilo ,
+     price.price_sup_kilo  ,
+     EXTRACT (YEAR FROM fecha.audit_date_ins) anio,
+     product."prod_id",
+     ptype.ptype_id,
+     product.prod_desc||coalesce(' '||ptype_desc,'') prod_desc,
+     product."var_id",
+     product."var_desc",
+     quality."qua_id",
+     quality."qua_desc",
+     size."size_id",
+     size."size_desc",
+     fecha."date_field",
+     fecha."month_id",
+     origen."ori_country",
+     tunit.tunit_desc,
+     country.ctr_sk,
+     fecha.date_sk,
+     product.prdvar_sk,
+     size.size_sk,
+     quality.qua_sk,
+     ptype.ptype_sk
+from
+     "public"."date_dim" fecha INNER JOIN "public"."price_fact" price ON fecha."date_sk" = price."date_sk"
+     INNER JOIN "public"."product_variety_dim" product ON price."prdvar_sk" = product."prdvar_sk"
+     INNER JOIN "public"."size_dim" size ON price."size_sk" = size."size_sk"
+     INNER JOIN "public"."quality_dim" quality ON price."qua_sk" = quality."qua_sk"
+     INNER JOIN "public"."origin_dim" origen ON price."ori_sk" = origen."ori_sk"
+     INNER JOIN "public"."trad_unit_dim" tunit ON price."tunit_sk" = tunit."tunit_sk"
+     INNER JOIN "public"."country_dim" country ON price.ctr_sk = country.ctr_sk
+     inner JOIN public.product_type_dim ptype on ptype.ptype_sk = price.ptype_sk
+WHERE
+     (product.prdvar_sk, ptype.ptype_sk, quality.qua_Id, size.size_Id) IN ($P!{productFilters})
+  and fecha.date_field = to_date($P{initialDate},'dd/mm/yyyy')
+  and country.ctr_id in ($P!{countries})
+) base ON base.ctr_sk = q1.ctr_sk
+	  and base.date_sk = q1.date_sk
+	  and base.prdvar_sk = q1.prdvar_sk
+	  and base.ptype_sk = q1.ptype_sk
+	  and base.size_sk = q1.size_sk
+	  and base.qua_sk = q1.qua_sk
+ORDER BY
+  prod_id,
+  ptype_id,
+  var_id,
+  qua_id,
+  size_id,
+  ctr_id]]>
+	</queryString>
+	<field name="preciomin" class="java.math.BigDecimal"/>
+	<field name="preciomax" class="java.math.BigDecimal"/>
+	<field name="preciokgmin" class="java.math.BigDecimal"/>
+	<field name="preciokgmax" class="java.math.BigDecimal"/>
+	<field name="anio" class="java.lang.Double"/>
+	<field name="price_inf_kilo" class="java.math.BigDecimal"/>
+	<field name="price_sup_kilo" class="java.math.BigDecimal"/>
+	<field name="ctr_desc" class="java.lang.String"/>
+	<field name="ctr_id" class="java.lang.Integer"/>
+	<field name="prod_id" class="java.lang.Integer"/>
+	<field name="ptype_id" class="java.lang.Integer"/>
+	<field name="prod_desc" class="java.lang.String"/>
+	<field name="var_id" class="java.lang.Integer"/>
+	<field name="var_desc" class="java.lang.String"/>
+	<field name="qua_id" class="java.lang.Integer"/>
+	<field name="qua_desc" class="java.lang.String"/>
+	<field name="size_id" class="java.lang.Integer"/>
+	<field name="size_desc" class="java.lang.String"/>
+	<field name="date_field" class="java.sql.Date"/>
+	<field name="month_id" class="java.lang.Integer"/>
+	<field name="ori_country" class="java.lang.String"/>
+	<field name="tunit_desc" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="780" height="32" forecolor="#050505" backcolor="#FDFDFD"/>
+				<textElement textAlignment="Center">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Precio de Frutas en el Mercado Mayorista]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="36" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="120" height="20" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Fecha: "+$P{initialDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="240" y="0" width="540" height="31" isPrintWhenDetailOverflows="true" backcolor="#FDFDFD"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Países: "+$P{countriesDesc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="45" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="120" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Producto"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="240" y="0" width="80" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Calidad"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="500" y="0" width="70" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Precio Moda Min (USD\$/Unidad Tradicional)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="780" y="0" width="113" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Origen"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="320" y="0" width="80" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tamaño"]]></textFieldExpression>
+			</textField>
+			<textField bookmarkLevel="1">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="120" y="0" width="120" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Variedad"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Prueba"]]></anchorNameExpression>
+				<hyperlinkTooltipExpression><![CDATA["Esta es una prueba de tooltip"]]></hyperlinkTooltipExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="400" y="0" width="100" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["País"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="893" y="0" width="113" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Unidad Tradicional"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="640" y="0" width="70" height="45" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Precio Moda Min (USD\$/Kg.)"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="570" y="0" width="70" height="45" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Precio Moda Max (USD\$/Unidad Tradicional)"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="710" y="0" width="70" height="45" isPrintWhenDetailOverflows="true" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Precio Moda Max (USD\$/Kg.)"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="780" y="0" width="113" height="14" isPrintWhenDetailOverflows="true" backcolor="#FCFCFC"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ori_country}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="120" y="0" width="120" height="14" backcolor="#FCFCFC"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{var_desc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="240" y="0" width="80" height="14" isPrintWhenDetailOverflows="true" backcolor="#FCFCFC"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qua_desc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="320" y="0" width="80" height="14" isPrintWhenDetailOverflows="true" backcolor="#FCFCFC"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{size_desc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="400" y="0" width="100" height="14" isPrintWhenDetailOverflows="true" backcolor="#FCFCFC"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ctr_desc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="120" height="14" isPrintWhenDetailOverflows="true" backcolor="#FCFCFC"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prod_desc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="893" y="0" width="113" height="14" isPrintWhenDetailOverflows="true" backcolor="#FCFCFC"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tunit_desc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="500" y="0" width="70" height="14" backcolor="#FCFCFC">
+					<printWhenExpression><![CDATA[$F{preciomin}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{preciomin}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="640" y="0" width="70" height="14" backcolor="#FCFCFC">
+					<printWhenExpression><![CDATA[$F{preciokgmin}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{preciokgmin}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="570" y="0" width="70" height="14" backcolor="#FCFCFC">
+					<printWhenExpression><![CDATA[$F{preciomax}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{preciomax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="710" y="0" width="70" height="14" backcolor="#FCFCFC">
+					<printWhenExpression><![CDATA[$F{preciokgmax}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{preciokgmax}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement stretchType="RelativeToBandHeight" x="500" y="0" width="70" height="14" isPrintWhenDetailOverflows="true" forecolor="#FF0000" backcolor="#FCFCFC">
+					<printWhenExpression><![CDATA[$F{preciomin}==null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No Disponible"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement stretchType="RelativeToBandHeight" x="570" y="0" width="70" height="14" forecolor="#FF0000" backcolor="#FCFCFC">
+					<printWhenExpression><![CDATA[$F{preciomax}==null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No Disponible"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToBandHeight" x="640" y="0" width="70" height="14" forecolor="#FF0000" backcolor="#FCFCFC">
+					<printWhenExpression><![CDATA[$F{preciokgmin}==null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No Disponible"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement stretchType="RelativeToBandHeight" x="710" y="0" width="70" height="14" forecolor="#FF0000" backcolor="#FCFCFC">
+					<printWhenExpression><![CDATA[$F{preciokgmax}==null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No Disponible"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="46" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="154" splitType="Stretch">
+			<staticText>
+				<reportElement x="320" y="0" width="80" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[SIMEFRUT]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="29" width="240" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["se sugiere revisar los pesos en el siguiente"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="17" width="640" height="12" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Recuerde que los tamaños mostrados en el reporte tienen rangos de peso que varían de país en país, por lo que para efectos de comparación de datos,"]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="Reference" hyperlinkTarget="Blank">
+				<reportElement x="240" y="29" width="80" height="12" forecolor="#0000FF"/>
+				<textElement>
+					<font size="8" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Link"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Link"]]></anchorNameExpression>
+				<hyperlinkReferenceExpression><![CDATA[$P{urlSizeInfo}]]></hyperlinkReferenceExpression>
+				<hyperlinkTooltipExpression><![CDATA[$P{urlSizeInfo}]]></hyperlinkTooltipExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="60" width="780" height="94" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Precio moda: representa el rango de precio al que se vendió más del 50% del volumen comercializado en ese mercado.\nOrigen: se refiere al país o región de donde proviene el producto del cuál se está reportando el precio.\nUnidad tradicional: se refiere a las unidades observadas en el mercado mayorista para el producto y país en estudio.\n\nFuente metodológica: El precio moda recopilado se basa en la metodología del AMS-USDA y los SIMAs, bajo asesoría del AMS están en el proceso de ajustar su metodología para tomar este dato con precisión.\nFuente de datos: SIMAs"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowViewLayout Version="1.2">
+  <StrutsActivity path="/AprobacionAction.do" location="350,550" dimension="273,88" />
+  <StrutsActivity path="/ldvAction.do" location="350,550" dimension="273,88" />
+  <StrutsActivity path="/login.do" location="50,50" dimension="281,88" />
+  <StrutsActivity path="/optionGroupAction.do" location="650,150" dimension="317,88" />
+  <StrutsActivity path="/rolesAction.do" location="350,350" dimension="282,88" />
+  <StrutsActivity path="/optionAppAction.do" location="950,450" dimension="307,88" />
+  <StrutsActivity path="/userAction.do" location="350,750" dimension="278,88" />
+  <StrutsActivity path="/changePasswordAction.do" location="950,850" dimension="339,88" />
+  <StrutsActivity path="/tipoServicioAction.do" location="50,1050" dimension="313,88" />
+  <StrutsActivity path="/tipoCompraAction.do" location="950,1050" dimension="313,88" />
+  <StrutsActivity path="/afcAction.do" location="1250,650" dimension="276,88" />
+  <StrutsActivity path="/itemAfcAction.do" location="50,1250" dimension="298,88" />
+  <StrutsActivity path="/serviciosAction.do" location="1250,1250" dimension="298,88" />
+  <StrutsActivity path="/proveedorServicioAction.do" location="1250,250" dimension="343,88" />
+  <StrutsActivity path="/manualErogacionAction.do" location="50,1450" dimension="337,88" />
+  <StrutsActivity path="/validacionAction.do" location="1550,850" dimension="303,88" />
+  <StrutsActivity path="/delegacionAction.do" location="1250,1450" dimension="308,88" />
+  <StrutsActivity path="/validacionesAsociadasAction.do" location="50,1650" dimension="357,88" />
+  <StrutsActivity path="/cargaCapexAction.do" location="1250,1650" dimension="316,88" />
+  <StrutsActivity path="/suministrosAction.do" location="50,1850" dimension="310,88" />
+  <StrutsActivity path="/itemCapexAction.do" location="950,1850" dimension="309,88" />
+  <StrutsActivity path="/estadoAction.do" location="1550,1950" dimension="289,88" />
+  <StrutsActivity path="/movimientoSaldosAction.do" location="1850,650" dimension="341,88" />
+  <StrutsActivity path="/solicitudAction.do" location="1850,1150" dimension="295,88" />
+  <StrutsActivity path="failOption;6" location="950,650" dimension="168,75" />
+  <StrutsActivity path="logout;6" location="50,850" dimension="144,75" />
+  <StrutsActivity path="/jsp/LOV/ldv.jsp" location="50,250" dimension="106,49" />
+  <StrutsActivity path="/jsp/principal/principal.jsp" location="650,50" dimension="151,49" />
+  <StrutsActivity path="/jsp/principal/login.jsp" location="950,50" dimension="134,49" />
+  <StrutsActivity path="/jsp/administracion/optionGroup.jsp" location="50,350" dimension="200,49" />
+  <StrutsActivity path="/jsp/administracion/roles.jsp" location="950,350" dimension="164,49" />
+  <StrutsActivity path="/jsp/administracion/optionApp.jsp" location="50,550" dimension="190,49" />
+  <StrutsActivity path="/jsp/administracion/user.jsp" location="50,450" dimension="162,49" />
+  <StrutsActivity path="/jsp/administracion/changePassword.jsp" location="350,950" dimension="222,49" />
+  <StrutsActivity path="/jsp/mantenimientos/tipoServicio.jsp" location="650,1050" dimension="203,49" />
+  <StrutsActivity path="/jsp/mantenimientos/tipoCompra.jsp" location="650,1150" dimension="203,49" />
+  <StrutsActivity path="/jsp/mantenimientos/aFC.jsp" location="650,950" dimension="167,49" />
+  <StrutsActivity path="/jsp/mantenimientos/itemAFC.jsp" location="650,1250" dimension="188,49" />
+  <StrutsActivity path="/jsp/mantenimientos/servicios.jsp" location="650,1350" dimension="189,49" />
+  <StrutsActivity path="/jsp/mantenimientos/proveedorServicio.jsp" location="650,1450" dimension="235,49" />
+  <StrutsActivity path="/jsp/administracion/manualErogacion.jsp" location="950,1450" dimension="222,49" />
+  <StrutsActivity path="/jsp/administracion/validacion.jsp" location="1550,1050" dimension="188,49" />
+  <StrutsActivity path="/jsp/mantenimientos/delegacion.jsp" location="650,1550" dimension="199,49" />
+  <StrutsActivity path="/jsp/mantenimientos/validacionesAsociadas.jsp" location="650,1650" dimension="254,49" />
+  <StrutsActivity path="/jsp/procesos/cargaCapex.jsp" location="650,1750" dimension="174,49" />
+  <StrutsActivity path="/jsp/mantenimientos/suministros.jsp" location="650,1850" dimension="201,49" />
+  <StrutsActivity path="/jsp/mantenimientos/itemCapex.jsp" location="1550,1850" dimension="199,49" />
+  <StrutsActivity path="/jsp/mantenimientos/estado.jsp" location="50,2050" dimension="181,49" />
+  <StrutsActivity path="/jsp/procesos/movimientoSaldos.jsp" location="1850,1050" dimension="201,49" />
+  <StrutsActivity path="/jsp/solicitudes/solicitud.jsp" location="950,1350" dimension="160,49" />
+  <StrutsActivity path="/jsp/principal/failOption.jsp" location="50,750" dimension="158,49" />
+  <StrutsActivity path="/plantillas/ldv.jsp" location="50,650" dimension="110,49" />
+  <StrutsActivity path="/itemAfcAction" location="950,1250" dimension="99,49" />
+  <StrutsActivity path="/solicitudCapexAction.do" location="1850,1350" dimension="326,88" />
+  <StrutsActivity path="/jsp/solicitudes/solicitudCapex.jsp" location="950,1550" dimension="191,49" />
+  <StrutsTransition id="/jsp/mantenimientos/validacionesAsociadas.jsp,null,/validacionesAsociadasAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="650,1654" />
+      <AbsolutePoint location="407,1654" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/afcAction.do,success,/jsp/mantenimientos/aFC.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1358,738" />
+      <AbsolutePoint location="1358,795" />
+      <AbsolutePoint location="763,795" />
+      <AbsolutePoint location="763,950" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/manualErogacionAction.do,success,/jsp/administracion/manualErogacion.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="387,1506" />
+      <AbsolutePoint location="1061,1506" />
+      <AbsolutePoint location="1061,1499" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/rolesAction.do,updateFail,/jsp/administracion/roles.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="632,384" />
+      <AbsolutePoint location="950,384" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/servicios.jsp,null,/serviciosAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="744,1399" />
+      <AbsolutePoint location="744,1414" />
+      <AbsolutePoint location="1429,1414" />
+      <AbsolutePoint location="1429,1338" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/validacionesAsociadasAction.do,success,/jsp/mantenimientos/validacionesAsociadas.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="407,1684" />
+      <AbsolutePoint location="650,1684" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/solicitudCapexAction.do,updateFail,/jsp/solicitudes/solicitudCapex.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1927,1438" />
+      <AbsolutePoint location="1927,1557" />
+      <AbsolutePoint location="1141,1557" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/solicitudAction.do,success,/jsp/solicitudes/solicitud.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1850,1206" />
+      <AbsolutePoint location="1136,1206" />
+      <AbsolutePoint location="1136,1265" />
+      <AbsolutePoint location="1094,1265" />
+      <AbsolutePoint location="1094,1350" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/procesos/movimientoSaldos.jsp,null,/movimientoSaldosAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1950,1050" />
+      <AbsolutePoint location="1950,738" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/administracion/validacion.jsp,null,/validacionAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1671,1050" />
+      <AbsolutePoint location="1671,938" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/principal/login.jsp,null,/login.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1017,50" />
+      <AbsolutePoint location="1017,-25" />
+      <AbsolutePoint location="190,-25" />
+      <AbsolutePoint location="190,50" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/serviciosAction.do,success,/jsp/mantenimientos/servicios.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1250,1314" />
+      <AbsolutePoint location="744,1314" />
+      <AbsolutePoint location="744,1350" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/manualErogacionAction.do,updateFail,/jsp/administracion/manualErogacion.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="387,1484" />
+      <AbsolutePoint location="542,1484" />
+      <AbsolutePoint location="542,2323" />
+      <AbsolutePoint location="2015,2323" />
+      <AbsolutePoint location="2015,1495" />
+      <AbsolutePoint location="1641,1495" />
+      <AbsolutePoint location="1641,1365" />
+      <AbsolutePoint location="1136,1365" />
+      <AbsolutePoint location="1136,1450" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/afcAction.do,updateFail,/jsp/mantenimientos/aFC.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1388,738" />
+      <AbsolutePoint location="1388,974" />
+      <AbsolutePoint location="817,974" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/optionGroupAction.do,updateFail,/jsp/administracion/optionGroup.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="650,224" />
+      <AbsolutePoint location="231,224" />
+      <AbsolutePoint location="231,350" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="logout;6,null,/login.do,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="194,887" />
+      <AbsolutePoint location="265,887" />
+      <AbsolutePoint location="265,138" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/movimientoSaldosAction.do,updateFail,/jsp/procesos/movimientoSaldos.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2020,738" />
+      <AbsolutePoint location="2020,1050" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/administracion/changePassword.jsp,null,/changePasswordAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="491,950" />
+      <AbsolutePoint location="491,917" />
+      <AbsolutePoint location="950,917" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/delegacionAction.do,updateFail,/jsp/mantenimientos/delegacion.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1558,1465" />
+      <AbsolutePoint location="2105,1465" />
+      <AbsolutePoint location="2105,2263" />
+      <AbsolutePoint location="919,2263" />
+      <AbsolutePoint location="919,1574" />
+      <AbsolutePoint location="849,1574" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/itemAfcAction.do,success,/jsp/mantenimientos/itemAFC.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="348,1254" />
+      <AbsolutePoint location="650,1254" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/itemAFC.jsp,null,/itemAfcAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="714,1299" />
+      <AbsolutePoint location="714,1314" />
+      <AbsolutePoint location="348,1314" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/tipoServicioAction.do,updateFail,/jsp/mantenimientos/tipoServicio.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="363,1084" />
+      <AbsolutePoint location="650,1084" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/administracion/roles.jsp,null,/rolesAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1032,399" />
+      <AbsolutePoint location="1032,414" />
+      <AbsolutePoint location="632,414" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/estadoAction.do,success,/jsp/mantenimientos/estado.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1694,2038" />
+      <AbsolutePoint location="1694,2053" />
+      <AbsolutePoint location="231,2053" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/login.do,fail,/jsp/principal/login.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="331,114" />
+      <AbsolutePoint location="1017,114" />
+      <AbsolutePoint location="1017,99" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/tipoServicioAction.do,success,/jsp/mantenimientos/tipoServicio.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="363,1054" />
+      <AbsolutePoint location="650,1054" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/administracion/user.jsp,null,/userAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="115,499" />
+      <AbsolutePoint location="115,514" />
+      <AbsolutePoint location="5,514" />
+      <AbsolutePoint location="5,714" />
+      <AbsolutePoint location="489,714" />
+      <AbsolutePoint location="489,750" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/optionAppAction.do,updateFail,/jsp/administracion/optionApp.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="950,514" />
+      <AbsolutePoint location="145,514" />
+      <AbsolutePoint location="145,550" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/userAction.do,success,/jsp/administracion/user.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="350,784" />
+      <AbsolutePoint location="325,784" />
+      <AbsolutePoint location="325,414" />
+      <AbsolutePoint location="131,414" />
+      <AbsolutePoint location="131,450" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/login.do,success,/jsp/principal/principal.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="331,84" />
+      <AbsolutePoint location="650,84" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/proveedorServicioAction.do,success,/jsp/mantenimientos/proveedorServicio.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1250,254" />
+      <AbsolutePoint location="832,254" />
+      <AbsolutePoint location="832,887" />
+      <AbsolutePoint location="617,887" />
+      <AbsolutePoint location="617,1484" />
+      <AbsolutePoint location="650,1484" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/estadoAction.do,updateFail,/jsp/mantenimientos/estado.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1550,2023" />
+      <AbsolutePoint location="140,2023" />
+      <AbsolutePoint location="140,2050" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/tipoCompra.jsp,null,/tipoCompraAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="650,1174" />
+      <AbsolutePoint location="-100,1174" />
+      <AbsolutePoint location="-100,2144" />
+      <AbsolutePoint location="2356,2144" />
+      <AbsolutePoint location="2356,1114" />
+      <AbsolutePoint location="1263,1114" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/proveedorServicioAction.do,back,/serviciosAction.do,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1593,294" />
+      <AbsolutePoint location="2266,294" />
+      <AbsolutePoint location="2266,1294" />
+      <AbsolutePoint location="1548,1294" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/itemAfcAction.do,updateFail,/jsp/mantenimientos/itemAFC.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="348,1284" />
+      <AbsolutePoint location="650,1284" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="failOption;6,null,/jsp/principal/failOption.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="950,684" />
+      <AbsolutePoint location="175,684" />
+      <AbsolutePoint location="175,750" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/delegacion.jsp,null,/delegacionAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="749,1599" />
+      <AbsolutePoint location="749,1614" />
+      <AbsolutePoint location="1404,1614" />
+      <AbsolutePoint location="1404,1538" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/tipoCompraAction.do,updateFail,/jsp/mantenimientos/tipoCompra.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1106,1138" />
+      <AbsolutePoint location="1106,1174" />
+      <AbsolutePoint location="853,1174" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/optionGroupAction.do,success,/jsp/administracion/optionGroup.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="650,164" />
+      <AbsolutePoint location="171,164" />
+      <AbsolutePoint location="171,350" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/itemAfcAction.do,back,/afcAction.do,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="199,1250" />
+      <AbsolutePoint location="199,1214" />
+      <AbsolutePoint location="1418,1214" />
+      <AbsolutePoint location="1418,738" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/solicitudes/solicitudCapex.jsp,null,/solicitudCapexAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1141,1595" />
+      <AbsolutePoint location="1997,1595" />
+      <AbsolutePoint location="1997,1438" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/userAction.do,updateFail,/jsp/administracion/user.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="350,814" />
+      <AbsolutePoint location="-25,814" />
+      <AbsolutePoint location="-25,474" />
+      <AbsolutePoint location="50,474" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/delegacionAction.do,back,/validacionesAsociadasAction.do,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1250,1484" />
+      <AbsolutePoint location="1217,1484" />
+      <AbsolutePoint location="1217,1714" />
+      <AbsolutePoint location="407,1714" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/serviciosAction.do,updateFail,/jsp/mantenimientos/servicios.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1250,1265" />
+      <AbsolutePoint location="1187,1265" />
+      <AbsolutePoint location="1187,1814" />
+      <AbsolutePoint location="482,1814" />
+      <AbsolutePoint location="482,1374" />
+      <AbsolutePoint location="650,1374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cargaCapexAction.do,success,/jsp/procesos/cargaCapex.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1378,1738" />
+      <AbsolutePoint location="1378,1774" />
+      <AbsolutePoint location="824,1774" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/delegacionAction.do,success,/jsp/mantenimientos/delegacion.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1250,1514" />
+      <AbsolutePoint location="749,1514" />
+      <AbsolutePoint location="749,1550" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/itemCapex.jsp,null,/itemCapexAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1649,1899" />
+      <AbsolutePoint location="1649,1914" />
+      <AbsolutePoint location="1259,1914" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/solicitudes/solicitud.jsp,null,/solicitudAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1064,1350" />
+      <AbsolutePoint location="1064,1194" />
+      <AbsolutePoint location="1850,1194" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/aFC.jsp,null,/afcAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="733,950" />
+      <AbsolutePoint location="733,595" />
+      <AbsolutePoint location="1388,595" />
+      <AbsolutePoint location="1388,650" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/suministrosAction.do,updateFail,/jsp/mantenimientos/suministros.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="360,1884" />
+      <AbsolutePoint location="650,1884" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/proveedorServicioAction.do,updateFail,/jsp/mantenimientos/proveedorServicio.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1250,314" />
+      <AbsolutePoint location="919,314" />
+      <AbsolutePoint location="919,1474" />
+      <AbsolutePoint location="885,1474" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/changePasswordAction.do,success,/jsp/administracion/changePassword.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="950,857" />
+      <AbsolutePoint location="461,857" />
+      <AbsolutePoint location="461,950" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/administracion/manualErogacion.jsp,null,/manualErogacionAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1158,1499" />
+      <AbsolutePoint location="1158,1571" />
+      <AbsolutePoint location="1927,1571" />
+      <AbsolutePoint location="1927,2194" />
+      <AbsolutePoint location="442,2194" />
+      <AbsolutePoint location="442,1514" />
+      <AbsolutePoint location="387,1514" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/suministrosAction.do,success,/jsp/mantenimientos/suministros.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="360,1914" />
+      <AbsolutePoint location="750,1914" />
+      <AbsolutePoint location="750,1899" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/validacionAction.do,updateFail,/jsp/administracion/validacion.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1731,938" />
+      <AbsolutePoint location="1731,1050" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/solicitudCapexAction.do,success,/jsp/solicitudes/solicitudCapex.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1913,1438" />
+      <AbsolutePoint location="1913,1585" />
+      <AbsolutePoint location="1141,1585" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/itemCapexAction.do,updateFail,/jsp/mantenimientos/itemCapex.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1259,1884" />
+      <AbsolutePoint location="1550,1884" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/tipoServicio.jsp,null,/tipoServicioAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="751,1099" />
+      <AbsolutePoint location="751,1114" />
+      <AbsolutePoint location="363,1114" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/optionAppAction.do,success,/jsp/administracion/optionApp.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="950,454" />
+      <AbsolutePoint location="227,454" />
+      <AbsolutePoint location="227,550" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/movimientoSaldosAction.do,success,/jsp/procesos/movimientoSaldos.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1990,738" />
+      <AbsolutePoint location="1990,1050" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/suministros.jsp,null,/suministrosAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="780,1899" />
+      <AbsolutePoint location="780,1993" />
+      <AbsolutePoint location="235,1993" />
+      <AbsolutePoint location="235,1938" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/validacionAction.do,success,/jsp/administracion/validacion.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1701,938" />
+      <AbsolutePoint location="1701,1050" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/procesos/cargaCapex.jsp,null,/cargaCapexAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="650,1774" />
+      <AbsolutePoint location="617,1774" />
+      <AbsolutePoint location="617,1963" />
+      <AbsolutePoint location="1408,1963" />
+      <AbsolutePoint location="1408,1738" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/rolesAction.do,success,/jsp/administracion/roles.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="632,354" />
+      <AbsolutePoint location="950,354" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/proveedorServicio.jsp,null,/proveedorServicioAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="868,1450" />
+      <AbsolutePoint location="868,284" />
+      <AbsolutePoint location="1250,284" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/validacionAction.do,back,/manualErogacionAction.do,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1641,938" />
+      <AbsolutePoint location="1641,1014" />
+      <AbsolutePoint location="378,1014" />
+      <AbsolutePoint location="378,1450" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/mantenimientos/estado.jsp,null,/estadoAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="140,2099" />
+      <AbsolutePoint location="140,2233" />
+      <AbsolutePoint location="1724,2233" />
+      <AbsolutePoint location="1724,2038" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/tipoCompraAction.do,success,/jsp/mantenimientos/tipoCompra.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="950,1114" />
+      <AbsolutePoint location="781,1114" />
+      <AbsolutePoint location="781,1150" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/ldvAction.do,success,/jsp/LOV/ldv.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="623,595" />
+      <AbsolutePoint location="695,595" />
+      <AbsolutePoint location="695,284" />
+      <AbsolutePoint location="156,284" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/AprobacionAction.do,success,/jsp/LOV/ldv.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="623,595" />
+      <AbsolutePoint location="695,595" />
+      <AbsolutePoint location="695,284" />
+      <AbsolutePoint location="156,284" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/administracion/optionApp.jsp,null,/optionAppAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="240,574" />
+      <AbsolutePoint location="295,574" />
+      <AbsolutePoint location="295,484" />
+      <AbsolutePoint location="950,484" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/jsp/administracion/optionGroup.jsp,null,/optionGroupAction.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="201,350" />
+      <AbsolutePoint location="201,194" />
+      <AbsolutePoint location="650,194" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/solicitudAction.do,updateFail,/jsp/solicitudes/solicitud.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1850,1214" />
+      <AbsolutePoint location="1798,1214" />
+      <AbsolutePoint location="1798,1387" />
+      <AbsolutePoint location="1110,1387" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/itemCapexAction.do,success,/jsp/mantenimientos/itemCapex.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1259,1854" />
+      <AbsolutePoint location="1550,1854" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+</FlowViewLayout>
+

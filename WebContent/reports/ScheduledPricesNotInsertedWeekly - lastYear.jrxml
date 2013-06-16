@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ScheduledNotInserted" language="groovy" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="21" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.3660269107301413"/>
+	<property name="ireport.x" value="124"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ctrId" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ctrDesc" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dias" class="java.lang.String">
+		<defaultValueExpression><![CDATA["'1'"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select ctr_desc,
+	case when trim(to_char(date_field,'Day'))='Monday' then
+		'Lunes'
+	when trim(to_char(date_field,'Day')) ='Tuesday' then
+		'Martes'
+	when trim(to_char(date_field,'Day')) ='Wednesday' then
+		'Miercoles'
+	when trim(to_char(date_field,'Day')) ='Thursday' then
+		'Jueves'
+	when trim(to_char(date_field,'Day')) ='Friday' then
+		'Viernes'
+	when trim(to_char(date_field,'Day')) ='Saturday' then
+		'Sabado'
+	when trim(to_char(date_field,'Day')) ='Sunday' then
+		'Domingo'
+	else trim(to_char(date_field,'Day'))
+	end dia,
+	to_char(date_field,'dd/mm/yyyy') fecha,
+	c.prod_desc||coalesce(' '||ptype_desc,'')||coalesce(' - '||var_desc,'') product
+from public.date_dim b,
+	public.product_variety_dim c,
+	public.product_type_dim ptype,
+	(select distinct prdvar_sk, aa.ptype_sk, bb.ctr_sk
+		from public.price_fact aa, public.country_dim bb
+		where aa.ctr_Sk = bb.ctr_sk
+		  and bb.ctr_id in($P!{ctrId})
+		  /*and to_char(to_date(date_sk::varchar,'yyyymmdd'),'yyyy')::int = to_char(current_date,'yyyy')::int - 1*/
+	) d,
+	public.country_dim e
+where c.prdvar_sk = d.prdvar_sk
+and e.ctr_sk = d.ctr_sk
+and ptype.ptype_sk = d.ptype_sk
+and current_date between c.effective_date and c.expiry_date
+and current_date between ptype.effective_date and ptype.expiry_date
+and current_date between e.effective_date and e.expiry_date
+and (date_sk, d.prdvar_sk, d.ptype_sk, d.ctr_sk) not in (
+	select date_sk, prdvar_sk, ptype_sk, bb.ctr_sk
+	from price_fact aa, country_dim bb
+	where aa.ctr_Sk = bb.ctr_sk
+	  and current_date between bb.effective_date and bb.expiry_date
+	  and bb.ctr_id in($P!{ctrId})
+	  /*and to_char(to_date(date_sk::varchar,'yyyymmdd'),'yyyy')::int = to_char(current_date,'yyyy')::int - 1*/
+	)
+ and 0<(select count(*)
+		from scheduled_price_insertion
+		where ctr_id = $P!{ctrId}
+		  and date_field between spi_date_ini and coalesce(spi_date_end,current_date +1)
+		  and 0<position(case when trim(to_char(date_field,'Day'))='Monday' then
+ 		'Lunes'
+ 	when trim(to_char(date_field,'Day')) ='Tuesday' then
+ 		'Martes'
+ 	when trim(to_char(date_field,'Day')) ='Wednesday' then
+ 		'Miercoles'
+ 	when trim(to_char(date_field,'Day')) ='Thursday' then
+ 		'Jueves'
+ 	when trim(to_char(date_field,'Day')) ='Friday' then
+ 		'Viernes'
+ 	when trim(to_char(date_field,'Day')) ='Saturday' then
+ 		'Sabado'
+ 	when trim(to_char(date_field,'Day')) ='Sunday' then
+ 		'Domingo'
+ 	else trim(to_char(date_field,'Day'))
+ 	end in spi_value)
+		) /*($P!{dias})*/
+/* and extract(year from date_field) = to_char(current_date,'YYYY')::int */
+ and date_field between to_date('20120101','yyyymmdd') and current_date-1
+ and (e.ctr_id, date_field, c.prod_id, ptype.ptype_id, c.var_id ) not in(
+	 SELECT
+	  pde.ctr_id,
+	  pde.date_field dateField,
+	  pde.prod_id prodId,
+	  pde.ptype_id ptypeId,
+	  pde.var_id varId
+	FROM
+	  PUBLIC.Price_Date_Exception pde
+		left outer join PUBLIC.products_Ctg product
+			on product.prod_id = pde.prod_id
+		left outer join PUBLIC.varieties_ctg var
+			on var.var_id = pde.var_id
+		left outer join PUBLIC.product_type_ctg ptype
+				on ptype.ptype_id = pde.ptype_id,
+	  PUBLIC.countries_ctg country
+	WHERE
+	  pde.ctr_id = country.ctr_id
+	  AND pde.ctr_id in ($P!{ctrId})
+  )
+ order by ctr_desc,c.prod_desc, ptype_desc, var_desc, date_field, dia]]>
+	</queryString>
+	<field name="ctr_desc" class="java.lang.String"/>
+	<field name="dia" class="java.lang.String"/>
+	<field name="fecha" class="java.lang.String"/>
+	<field name="product" class="java.lang.String"/>
+	<variable name="product_1" class="java.lang.Integer" resetType="Group" resetGroup="product" calculation="Count">
+		<variableExpression><![CDATA[$F{product}]]></variableExpression>
+	</variable>
+	<group name="product" keepTogether="true">
+		<groupExpression><![CDATA[$F{product}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="177" height="15" isPrintWhenDetailOverflows="true" printWhenGroupChanges="product"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{product}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="product">
+					<reportElement stretchType="RelativeToBandHeight" x="177" y="0" width="100" height="15" isPrintWhenDetailOverflows="true" printWhenGroupChanges="product"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[": "+$V{product_1} + " día(s)"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="44" width="554" height="35"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Adjunto se detallan las fechas en las cuales no se ha justificado porque no se han realizado el ingreso de precios para los días:"+$P{dias}.replaceAll( "'", "") +" correspondiente al país: " + $P{ctrDesc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy hh:mm a">
+				<reportElement x="0" y="0" width="177" height="20"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="20" width="554" height="25"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Datos de Precios Mayoristas Faltantes]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="177" y="0" width="100" height="15" backcolor="#E0E0E0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[fecha]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="177" y="0" width="100" height="15" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

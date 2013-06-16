@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+
+  <form-beans >
+    <form-bean name="loginForm" type="org.promefrut.simefrut.struts.commons.forms.LoginForm" />
+    <form-bean name="optionGroupForm" type="org.promefrut.simefrut.struts.administration.forms.OptionGroupForm" />
+    <form-bean name="rolesForm" type="org.promefrut.simefrut.struts.administration.forms.RolesForm" />
+    <form-bean name="optionAppForm" type="org.promefrut.simefrut.struts.administration.forms.OptionAppForm" />
+    <form-bean name="userForm" type="org.promefrut.simefrut.struts.administration.forms.UserForm" />
+    <form-bean name="changePasswordForm" type="org.promefrut.simefrut.struts.administration.forms.ChangePasswordForm" />
+    <form-bean name="changePwdForm" type="org.promefrut.simefrut.struts.administration.forms.ChangePwdForm" />
+    <form-bean name="optionRolForm" type="org.promefrut.simefrut.struts.administration.forms.OptionRolForm" />
+    <form-bean name="countryForm" type="org.promefrut.simefrut.struts.catalogs.forms.CountryForm" />
+    <form-bean name="regionForm" type="org.promefrut.simefrut.struts.catalogs.forms.RegionForm" />
+    <form-bean name="provinceForm" type="org.promefrut.simefrut.struts.catalogs.forms.ProvinceForm" />
+    <form-bean name="countryCOMTRADEForm" type="org.promefrut.simefrut.struts.catalogs.forms.CountryCOMTRADEForm" />
+    <form-bean name="countryFAOSTATForm" type="org.promefrut.simefrut.struts.catalogs.forms.CountryFAOSTATForm" />
+    <form-bean name="qualityForm" type="org.promefrut.simefrut.struts.catalogs.forms.QualityForm" />
+    <form-bean name="productForm" type="org.promefrut.simefrut.struts.catalogs.forms.ProductForm" />
+    <form-bean name="productGroupFAOSTATForm" type="org.promefrut.simefrut.struts.catalogs.forms.ProductGroupFAOSTATForm" />
+    <form-bean name="productFAOSTATForm" type="org.promefrut.simefrut.struts.catalogs.forms.ProductFAOSTATForm" />
+    <form-bean name="varietyForm" type="org.promefrut.simefrut.struts.catalogs.forms.VarietyForm" />
+    <form-bean name="productTypeForm" type="org.promefrut.simefrut.struts.catalogs.forms.ProductTypeForm" />
+    <form-bean name="schedulePriceInsertionForm" type="org.promefrut.simefrut.struts.catalogs.forms.SchedulePriceInsertionForm" />
+    <form-bean name="priceForm" type="org.promefrut.simefrut.struts.maintenances.forms.PriceForm" />
+    <form-bean name="priceDateExceptionForm" type="org.promefrut.simefrut.struts.maintenances.forms.PriceDateExceptionForm" />
+    <form-bean name="traditionalUnitForm" type="org.promefrut.simefrut.struts.catalogs.forms.TraditionalUnitForm" />
+    <form-bean name="commerceForm" type="org.promefrut.simefrut.struts.maintenances.forms.CommerceForm" />
+    <form-bean name="productionForm" type="org.promefrut.simefrut.struts.maintenances.forms.ProductionForm" />
+	<form-bean name="importCommerceWorldForm" type="org.promefrut.simefrut.struts.maintenances.forms.ImportCommerceWorldForm" />
+	<form-bean name="parametersForm" type="org.promefrut.simefrut.struts.administration.forms.ParametersForm" />
+
+  </form-beans>
+
+  <global-exceptions />
+  <global-forwards >
+		<forward name="notFoundNoMenu" path="/jsp/errorPages/NotFoundNoMenu.jsp" />
+		<forward name="failOption" path="/jsp/principal/failOption.jsp" />
+		<forward name="logout" path="/login.do?accion=logout" />
+		<forward name="init" path="/login.do?accion=change" redirect = "true" />
+  </global-forwards>
+
+  <action-mappings >
+    
+	
+	<action
+      attribute="parametersForm"
+      input="/jsp/administration/Parameters.jsp"
+      name="parametersForm"
+      parameter="accion"
+      path="/parametersAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.administration.actions.ParametersAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/administration/Parameters.jsp" />
+    </action>
+        
+    <action
+      attribute="loginForm"
+      input="/jsp/principal/login.jsp"
+      name="loginForm"
+      parameter="accion"
+      path="/login"
+      scope="request"
+      type="org.promefrut.simefrut.struts.commons.actions.LoginAction"
+      validate="true" unknown="false">
+      <forward name="success" path="/jsp/principal/principal.jsp" />
+      <forward name="fail" path="/jsp/principal/login.jsp" />
+      <forward name="cambiarPwd" path="/jsp/principal/changePwd.jsp" />
+    </action>
+    <action
+      attribute="optionGroupForm"
+      input="/jsp/administration/optionGroup.jsp"
+      name="optionGroupForm"
+      parameter="accion"
+      path="/optionGroupAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.administration.actions.OptionGroupAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/administration/optionGroup.jsp" />
+    </action>
+    
+    <action
+      attribute="rolesForm"
+      input="/jsp/administration/roles.jsp"
+      name="rolesForm"
+      parameter="accion"
+      path="/rolesAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.administration.actions.RolesAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/administration/roles.jsp" />      
+    </action>
+    
+    <action
+      attribute="optionAppForm"
+      input="/jsp/administration/optionApp.jsp"
+      name="optionAppForm"
+      parameter="accion"
+      path="/optionAppAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.administration.actions.OptionAppAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/administration/optionApp.jsp" />
+    </action>
+    
+    <action
+      attribute="userForm"
+      input="/jsp/administration/user.jsp"
+      name="userForm"
+      parameter="accion"
+      path="/userAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.administration.actions.UserAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/administration/user.jsp" />
+      <forward name="fail" path="/jsp/administration/user.jsp" />
+    </action>
+    <action
+      attribute="changePasswordForm"
+      input="/jsp/administracion/changePassword.jsp"
+      name="changePasswordForm"
+      parameter="accion"
+      path="/changePasswordAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.administration.actions.ChangePasswordAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/administracion/changePassword.jsp" />
+
+    </action>
+    <action
+      attribute="changePwdForm"
+      input="/jsp/principal/changePwd.jsp"
+      name="changePwdForm"
+      parameter="accion"
+      path="/changePwdAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.administration.actions.ChangePwdAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/login.do?accion=logout" />
+      <forward name="fail" path="/jsp/principal/changePwd.jsp" />
+    </action>
+    
+
+    <action
+      attribute="optionRolForm"
+      input="/jsp/administration/optionRol.jsp"
+      name="optionRolForm"
+      parameter="accion"
+      path="/optionRolAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.administration.actions.OptionRolAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/administration/optionRol.jsp" />
+    </action>
+
+    
+    <action
+      attribute="countryForm"
+      input="/jsp/catalogs/Country.jsp"
+      name="countryForm"
+      parameter="accion"
+      path="/countryAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.CountryAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Country.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Country.jsp" />
+    </action>
+    
+    <action
+      attribute="regionForm"
+      input="/jsp/catalogs/Country.jsp"
+      name="regionForm"
+      parameter="accion"
+      path="/regionAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.RegionAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Country.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Country.jsp" />
+    </action>
+    
+    <action
+      attribute="provinceForm"
+      input="/jsp/catalogs/Country.jsp"
+      name="provinceForm"
+      parameter="accion"
+      path="/provinceAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.ProvinceAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Country.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Country.jsp" />
+    </action>
+    
+     <action
+      attribute="countryCOMTRADEForm"
+      input="/jsp/catalogs/Country.jsp"
+      name="countryCOMTRADEForm"
+      parameter="accion"
+      path="/countryCOMTRADEAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.CountryCOMTRADEAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Country.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Country.jsp" />
+    </action>
+    
+    <action
+      attribute="countryFAOSTATForm"
+      input="/jsp/catalogs/Country.jsp"
+      name="countryFAOSTATForm"
+      parameter="accion"
+      path="/countryFAOSTATAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.CountryFAOSTATAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Country.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Country.jsp" />
+    </action>
+    
+    <action
+      attribute="qualityForm"
+      input="/jsp/catalogs/Quality.jsp"
+      name="qualityForm"
+      parameter="accion"
+      path="/qualityAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.QualityAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Quality.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Quality.jsp" />
+    </action>
+    
+    <action
+      attribute="productForm"
+      input="/jsp/catalogs/Product.jsp"
+      name="productForm"
+      parameter="accion"
+      path="/productAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.ProductAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Product.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Product.jsp" />
+    </action>
+    
+    <action
+      attribute="productGroupFAOSTATForm"
+      input="/jsp/catalogs/ProductGroupFAOSTAT.jsp"
+      name="productGroupFAOSTATForm"
+      parameter="accion"
+      path="/productGroupFAOSTATAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.ProductGroupFAOSTATAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/ProductGroupFAOSTAT.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/ProductGroupFAOSTAT.jsp" />
+    </action>
+    
+    <action
+      attribute="productFAOSTATForm"
+      input="/jsp/catalogs/ProductFAOSTAT.jsp"
+      name="productFAOSTATForm"
+      parameter="accion"
+      path="/productFAOSTATAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.ProductFAOSTATAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/ProductFAOSTAT.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/ProductFAOSTAT.jsp" />
+    </action>
+    
+    <action
+      attribute="varietyForm"
+      input="/jsp/catalogs/Product.jsp"
+      name="varietyForm"
+      parameter="accion"
+      path="/varietyAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.VarietyAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Product.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Product.jsp" />
+    </action>
+    
+    <action
+      attribute="productTypeForm"
+      input="/jsp/catalogs/Product.jsp"
+      name="productTypeForm"
+      parameter="accion"
+      path="/productTypeAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.ProductTypeAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/Product.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/Product.jsp" />
+    </action>
+    
+    <action
+      attribute="schedulePriceInsertionForm"
+      input="/jsp/catalogs/SchedulePriceInsertion.jsp"
+      name="schedulePriceInsertionForm"
+      parameter="accion"
+      path="/schedulePriceInsertionAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.SchedulePriceInsertionAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/SchedulePriceInsertion.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/SchedulePriceInsertion.jsp" />
+    </action>
+    
+    <action
+      attribute="priceForm"
+      input="/jsp/maintenances/Price.jsp"
+      name="priceForm"
+      parameter="accion"
+      path="/priceAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.maintenances.actions.PriceAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/maintenances/Price.jsp" />
+	  <forward name="fail" path="/jsp/maintenances/Price.jsp" />
+    </action>
+    
+    <action
+      attribute="priceDateExceptionForm"
+      input="/jsp/maintenances/PriceDateException.jsp"
+      name="priceDateExceptionForm"
+      parameter="accion"
+      path="/priceDateExceptionAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.maintenances.actions.PriceDateExceptionAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/maintenances/PriceDateException.jsp" />
+	  <forward name="fail" path="/jsp/maintenances/PriceDateException.jsp" />
+    </action>
+    
+    <action
+      attribute="traditionalUnitForm"
+      input="/jsp/catalogs/TraditionalUnit.jsp"
+      name="traditionalUnitForm"
+      parameter="accion"
+      path="/traditionalUnitAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.catalogs.actions.TraditionalUnitAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/catalogs/TraditionalUnit.jsp" />
+	  <forward name="fail" path="/jsp/catalogs/TraditionalUnit.jsp" />
+    </action>
+    
+    <action
+      attribute="commerceForm"
+      input="/jsp/maintenances/Commerce.jsp"
+      name="commerceForm"
+      parameter="accion"
+      path="/commerceAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.maintenances.actions.CommerceAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/maintenances/Commerce.jsp" />
+	  <forward name="fail" path="/jsp/maintenances/Commerce.jsp" />
+    </action>
+    
+    <action
+      attribute="productionForm"
+      input="/jsp/maintenances/Production.jsp"
+      name="productionForm"
+      parameter="accion"
+      path="/productionAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.maintenances.actions.ProductionAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/maintenances/Production.jsp" />
+	  <forward name="fail" path="/jsp/maintenances/Production.jsp" />
+    </action>
+    
+    <action
+      attribute="loginForm"
+      input="/jsp/principal/login.jsp"
+      name="loginForm"
+      parameter="accion"
+      path="/AjaxLoginAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.commons.actions.AjaxLoginAction"
+      validate="false" unknown="false">
+    </action>
+    
+    <action
+      attribute="queryCIFOBForm"
+      input="/jsp/reports/QueryCIFOB.jsp"
+      parameter="accion"
+      path="/queryCIFOBAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryCIFOBAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryCIFOB.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryCIFOB.jsp" />
+    </action>
+    
+    
+    <action
+      attribute="queryImportExportForm"
+      input="/jsp/reports/QueryImportExport.jsp"
+      parameter="accion"
+      path="/queryImportExportAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryImportExportAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryImportExport.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryImportExport.jsp" />
+    </action>
+    
+    
+    <action
+      attribute="queryProductionCostForm"
+      input="/jsp/reports/QueryProductionCost.jsp"
+      parameter="accion"
+      path="/queryProductionCostAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryProductionCostAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryProductionCost.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryProductionCost.jsp" />
+    </action>
+    
+    <action
+      attribute="queryProductionVolumeForm"
+      input="/jsp/reports/QueryProductionVolume.jsp"
+      parameter="accion"
+      path="/queryProductionVolumeAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryProductionVolumeAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryProductionVolume.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryProductionVolume.jsp" />
+    </action>
+    
+    <action
+      attribute="queryPricesForm"
+      input="/jsp/reports/QueryPrices.jsp"
+      parameter="accion"
+      path="/queryPricesAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryPricesAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryPrices.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryPrices.jsp" />
+    </action>
+    
+    <action
+      attribute="queryGrowthRateForm"
+      input="/jsp/reports/QueryGrowthRate.jsp"
+      parameter="accion"
+      path="/queryGrowthRateAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryGrowthRateAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryGrowthRate.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryGrowthRate.jsp" />
+    </action>
+    
+    <action
+      attribute="queryVariationRateForm"
+      input="/jsp/reports/QueryVariationRate.jsp"
+      parameter="accion"
+      path="/queryVariationRateAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryVariationRateAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryVariationRate.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryVariationRate.jsp" />
+    </action>
+    
+    <action
+      attribute="queryParticipationGroupForm"
+      input="/jsp/reports/QueryParticipationGroup.jsp"
+      parameter="accion"
+      path="/queryParticipationGroupAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryParticipationGroupAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryParticipationGroup.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryParticipationGroup.jsp" />
+    </action>
+    
+    
+    <action
+      attribute="queryCompetitivenessMatrixForm"
+      input="/jsp/reports/QueryCompetitivenessMatrix.jsp"
+      parameter="accion"
+      path="/queryCompetitivenessMatrixAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryCompetitivenessMatrixAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryCompetitivenessMatrix.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryCompetitivenessMatrix.jsp" />
+    </action>
+    
+    <action
+      attribute="queryMarketInsertionModeForm"
+      input="/jsp/reports/QueryMarketInsertionMode.jsp"
+      parameter="accion"
+      path="/queryMarketInsertionModeAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.reports.actions.QueryMarketInsertionModeAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/reports/QueryMarketInsertionMode.jsp" />
+	  <forward name="fail" path="/jsp/reports/QueryMarketInsertionMode.jsp" />
+    </action>
+    
+     <action
+      attribute="importCommerceComtradeForm"
+      input="/jsp/maintenances/ImportCommerceComtrade.jsp"
+      parameter="accion"
+      name="importCommerceComtradeForm"
+      path="/importCommerceComtradeAction"
+      scope="request"
+      type="org.promefrut.simefrut.struts.maintenances.actions.ImportCommerceComtradeAction"
+      validate="false" unknown="false">
+      <forward name="success" path="/jsp/maintenances/ImportCommerceComtrade.jsp" />
+    </action>
+    
+    <action path="/reportAction" scope="request" parameter="accion" type="org.promefrut.simefrut.struts.reports.actions.ReportAction"/>
+    <action path="/getAction" scope="request" parameter="accion" type="org.promefrut.simefrut.struts.commons.actions.GetAction"/>
+    
+	
+  </action-mappings>
+
+  <controller>
+    <set-property  property="processorClass" value="org.promefrut.simefrut.utils.Security"/>
+  </controller>
+
+  <message-resources parameter="org.promefrut.simefrut.resource.ApplicationResources" />
+
+  <plug-in className="org.apache.struts.tiles.TilesPlugin" >
+  	<set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
+    <set-property property="moduleAware" value="true"/>
+    <set-property property="definitions-parse-validate" value="true"/>
+  </plug-in>
+</struts-config>
+
